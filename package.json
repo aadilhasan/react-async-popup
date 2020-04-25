@@ -4,7 +4,7 @@
   "description": "A React Popup which returns Promise, so it can be used with async await.",
   "author": "aadilhasan",
   "license": "MIT",
-  "repository": "aadilhasan/react-async-popup",
+  "repository": "https://github.com/aadilhasan/react-async-popup",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.tsx",
@@ -12,7 +12,7 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "microbundle-crl --no-compress --format modern,cjs",
+    "build": "microbundle-crl --format modern,cjs",
     "start": "microbundle-crl watch --no-compress --format modern,cjs",
     "prepublish": "run-s build",
     "test": "run-s test:unit test:lint test:build",
