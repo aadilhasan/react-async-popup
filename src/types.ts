@@ -19,12 +19,12 @@ export interface CallbackFuns {
   success: ToggleFun;
   cancel: ToggleFun;
 }
-export interface RnderComponenetType {
+export interface RenderComponenetType {
   (callbacks: CallbackFuns): JSX.Element;
 }
 
-export type BodyType = RnderComponenetType;
-export type FooterType = RnderComponenetType;
+export type BodyType = RenderComponenetType;
+export type FooterType = RenderComponenetType;
 
 export interface ConfirmProps {
   heading?: ReactComponentType;
@@ -41,8 +41,8 @@ export interface ConfirmState {
   visible: boolean;
 }
 
-export interface NewConfirmCofig extends ConfirmProps {
-  container: Element;
+export interface Config {
+  container?: Element | HTMLElement;
 }
 export interface DestroyCallbackFun {
   (): Promise<void>;
@@ -54,7 +54,7 @@ export interface NewConfirmReturnType {
 }
 
 export interface NewFun {
-  (config: NewConfirmCofig): Promise<NewConfirmReturnType>;
+  (config: Config): Promise<NewConfirmReturnType>;
 }
 
 export interface PromiseCallbackFn {

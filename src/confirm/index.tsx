@@ -6,16 +6,13 @@ import {
   // ReactComponentType,
   // BodyType,
   FooterType,
-  NewConfirmCofig,
+  Config,
   NewConfirmReturnType
 } from "../types";
 
 class Confirm extends Base {
   public render() {
-    const { heading, message, body, footer } = {
-      ...this.props,
-      ...this.dynamicProps
-    };
+    const { heading, message, body, footer } = this.dynamicConfig || {}
     const { visible } = this.state;
 
     if (!visible) return null;
@@ -73,10 +70,8 @@ class Confirm extends Base {
   }
 }
 
-Confirm.new = ({
-  container,
-  ...ConfirmProps
-}: NewConfirmCofig): Promise<NewConfirmReturnType> => {
+Confirm.new = (config: Config): Promise<NewConfirmReturnType> => {
+  const { container } = config || {};
   const div = document.createElement("div");
   if (container && container instanceof Element) {
     container.appendChild(div);
@@ -101,7 +96,7 @@ Confirm.new = ({
         destroy
       });
     };
-    ReactDOM.render(<Confirm {...ConfirmProps} ref={getRef} />, div);
+    ReactDOM.render(<Confirm ref={getRef} />, div);
   });
 };
 

@@ -6,16 +6,13 @@ import {
   // ReactComponentType,
   // BodyType,
   FooterType,
-  NewConfirmCofig,
+  Config,
   NewConfirmReturnType
 } from "../types";
 
 class Modal extends Base {
   render() {
-    const { heading, message, body, footer } = {
-      ...this.props,
-      ...this.dynamicProps
-    };
+    const { heading, message, body, footer } = this.dynamicConfig || {};
     const { visible } = this.state;
 
     if (!visible) return null;
@@ -34,27 +31,16 @@ class Modal extends Base {
   }
 
   private renderBody(message: any, body: any) {
-    let contentToRender: any  = message;
+    let contentToRender = this.getRenderableWithProps(body);
 
-    if (body && typeof body === "function") {
-      contentToRender = body({ cancel: this.onCancel, success: this.onOk });
-    } else if (body || body === null) {
-      contentToRender = null;
-    }
-
-    return <div className={styles.modalBody}>{contentToRender}</div>;
+    return <div className={styles.modalBody}>{contentToRender || message }</div>;
   }
 
   private renderFooter(footer?: FooterType) {
-    let contentToRender = null;
 
-    if (footer === null) return null;
+    let contentToRender = this.getRenderableWithProps(footer);
 
-    if (footer && typeof footer === "function") {
-      contentToRender = footer({ cancel: this.onCancel, success: this.onOk });
-    }
-
-    if (footer) {
+    if (contentToRender !== undefined) {
       return <footer>{contentToRender}</footer>;
     }
 
@@ -71,10 +57,11 @@ class Modal extends Base {
       </footer>
     );
   }
+
 }
 
-Modal.new = (config: NewConfirmCofig): Promise<NewConfirmReturnType> => {
-  const { container, ...ConfirmProps } = config || {};
+Modal.new = (config: Config): Promise<NewConfirmReturnType> => {
+  const { container } = config || {};
   const div = document.createElement("div");
   if (container && container instanceof Element) {
     container.appendChild(div);
@@ -99,8 +86,8 @@ Modal.new = (config: NewConfirmCofig): Promise<NewConfirmReturnType> => {
         destroy
       });
     };
-    ReactDOM.render(<Modal {...ConfirmProps} ref={getRef} />, div);
+    ReactDOM.render(<Modal ref={getRef} />, div);
   });
-};
+}; 
 
 export default Modal;
