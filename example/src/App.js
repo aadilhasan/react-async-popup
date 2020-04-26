@@ -47,18 +47,19 @@ export default function App() {
 
   const openModal = async () => {
     const name = await showModal({
-      heading: 'Hi this is modal',
+      heading: 'Hi this is fully accessible modal',
       body: <ModalBody />,
-      footer: null
-    })
+      footer: null,
+    });
     console.log(' use entered name is ', name)
   }
 
   return (
     <div className='App'>
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
+      <br/>
+      <br/>
       <button onClick={toggleAlert}> Delete account Confirm </button>
+      <hr/>
       <button onClick={toggleAlert2}> SHOW Confirm 2 </button>
       <hr />
       <button onClick={openModal}> show modal </button>
@@ -75,7 +76,7 @@ const ModalBody = ({ success, cancel }) => {
   return (
     <div>
       <form onSubmit={onSubmit}>
-        <h6> Enter your name </h6>
+        <h6 id="desc"> Please enter your name </h6>
         <input name='name-input' type='text' />
         <br />
         <button type='submit'> Confirm </button>

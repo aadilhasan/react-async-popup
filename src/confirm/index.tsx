@@ -2,9 +2,8 @@ import React from "react";
 import Base from "../base";
 import ReactDOM from "react-dom";
 import styles from "./style.module.scss";
+import { HEADER_ID, CONTENT_ID } from "../const"
 import {
-  // ReactComponentType,
-  // BodyType,
   FooterType,
   Config,
   NewConfirmReturnType
@@ -12,17 +11,18 @@ import {
 
 class Confirm extends Base {
   public render() {
-    const { heading, message, body, footer } = this.dynamicConfig || {}
+    const { heading, message, body, footer, ...aria } = this.dynamicConfig || {}
     const { visible } = this.state;
+    const { ariaLabelledby = HEADER_ID, ariaDescribedby = CONTENT_ID } = { ...this.props, ...aria };
 
     if (!visible) return null;
 
     return (
       //@ts-ignore
       <div className={styles.popupContainer} ref={this.myRef}>
-        <div className={styles.confirmContainer}>
+        <div role="alertdialog" aria-modal="true" aria-labelledby={ariaLabelledby} aria-describedby={ariaDescribedby} className={styles.confirmContainer}>
           <header>
-            <h3> {heading} </h3>
+            <h3 id={HEADER_ID}> {heading} </h3>
           </header>
           {this.renderBody(message, body)}
           {this.renderFooter(footer)}
@@ -40,7 +40,7 @@ class Confirm extends Base {
       contentToRender = null;
     }
 
-    return <div className={styles.body}>{contentToRender}</div>;
+    return <div id={CONTENT_ID} className={styles.body}>{contentToRender}</div>;
   }
 
   private renderFooter(footer?: FooterType) {
@@ -53,11 +53,11 @@ class Confirm extends Base {
     }
 
     if (footer) {
-      return <footer>{contentToRender}</footer>;
+      return <div className={styles.footer}>{contentToRender}</div>;
     }
 
     return (
-      <footer>
+      <div className={styles.footer}>
         <button className={styles.action} onClick={this.onCancel}>
           {" "}
           Cancel{" "}
@@ -66,7 +66,7 @@ class Confirm extends Base {
           {" "}
           ok{" "}
         </button>
-      </footer>
+      </div>
     );
   }
 }

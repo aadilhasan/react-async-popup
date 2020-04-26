@@ -1,10 +1,9 @@
 import React from "react";
 import Base from "../base";
 import ReactDOM from "react-dom";
+import { HEADER_ID, CONTENT_ID } from "../const"
 import styles from "./style.module.scss";
 import {
-  // ReactComponentType,
-  // BodyType,
   FooterType,
   Config,
   NewConfirmReturnType
@@ -12,18 +11,17 @@ import {
 
 class Modal extends Base {
   render() {
-    const { heading, message, body, footer } = this.dynamicConfig || {};
+    const { heading, message, body, footer, ...aria } = this.dynamicConfig || {};
     const { visible } = this.state;
+    const { ariaLabelledby = HEADER_ID, ariaDescribedby = CONTENT_ID } = { ...this.props, ...aria };
 
     if (!visible) return null;
 
     return (
       //@ts-ignore
       <div className={styles.popupContainer} ref={this.myRef}>
-        <div className={styles.modalContainer}>
-          <header>
-            <h3> {heading} </h3>
-          </header>
+        <div role="dialog" aria-modal="true" aria-labelledby={ariaLabelledby} aria-describedby={ariaDescribedby} className={styles.modalContainer}>
+          <h3 id={HEADER_ID}> {heading} </h3>
           {this.renderBody(message, body)}
           {this.renderFooter(footer)}
         </div>
@@ -33,8 +31,7 @@ class Modal extends Base {
 
   private renderBody(message: any, body: any) {
     let contentToRender = this.getRenderableWithProps(body);
-
-    return <div className={styles.modalBody}>{contentToRender || message }</div>;
+    return <div id={CONTENT_ID} className={styles.modalBody}>{contentToRender || message}</div>;
   }
 
   private renderFooter(footer?: FooterType) {
@@ -42,11 +39,11 @@ class Modal extends Base {
     let contentToRender = this.getRenderableWithProps(footer);
 
     if (contentToRender !== undefined) {
-      return <footer>{contentToRender}</footer>;
+      return <div className={styles.footer}>{contentToRender}</div>;
     }
 
     return (
-      <footer>
+      <div className={styles.footer}>
         <button className={styles.action} onClick={this.onCancel}>
           {" "}
           Cancel{" "}
@@ -55,7 +52,7 @@ class Modal extends Base {
           {" "}
           ok{" "}
         </button>
-      </footer>
+      </div>
     );
   }
 
@@ -73,7 +70,7 @@ Modal.new = (config: Config): Promise<NewConfirmReturnType> => {
   const destroy = (): Promise<void> => {
     return new Promise(resolve => {
       ReactDOM.unmountComponentAtNode(div);
-      if(div.parentNode){
+      if (div.parentNode) {
         div.parentNode.removeChild(div);
       }
       resolve();
@@ -89,6 +86,6 @@ Modal.new = (config: Config): Promise<NewConfirmReturnType> => {
     };
     ReactDOM.render(<Modal ref={getRef} />, div);
   });
-}; 
+};
 
 export default Modal;

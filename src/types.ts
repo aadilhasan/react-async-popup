@@ -31,6 +31,8 @@ export interface ConfirmProps {
   message?: ReactComponentType;
   body?: BodyType;
   footer?: FooterType;
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
 }
 
 export interface OpenFun {
@@ -43,6 +45,8 @@ export interface ConfirmState {
 
 export interface Config {
   container?: Element | HTMLElement;
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
 }
 export interface DestroyCallbackFun {
   (): Promise<void>;

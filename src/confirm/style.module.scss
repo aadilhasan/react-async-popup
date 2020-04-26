@@ -20,13 +20,13 @@
   animation: open 0.3s ease-out;
 }
 
-.confirmContainer footer {
+.footer {
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
 }
 
-.confirmContainer footer .action {
+.action {
   border: 1px solid red;
   margin: 0 5px;
   padding: 5px 10px;
