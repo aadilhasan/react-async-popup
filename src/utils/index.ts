@@ -4,7 +4,6 @@ export const trapFocus = (element: any) => {
 
     if (!element) return () => { }
     const focusedBeforModalOpen = document.activeElement;
-    console.log(" == first focues ", focusedBeforModalOpen);
     const focusableEls = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
     const firstFocusableEl: any = focusableEls[0];
     const lastFocusableEl: any = focusableEls[focusableEls.length - 1];
