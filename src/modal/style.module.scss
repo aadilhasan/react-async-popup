@@ -1,0 +1,49 @@
+.popupContainer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.modalContainer {
+  border: 2px solid black;
+  padding: 15px;
+  background-color: gray;
+  color: white;
+  min-width: 300px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  animation: open 0.3s ease-out;
+}
+
+.modalBody {
+  flex: 1;
+}
+
+footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.action {
+  border: 1px solid red;
+  margin: 0 5px;
+  padding: 5px 10px;
+}
+
+@keyframes open {
+  0% {
+    transform: scale(0, 0);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
