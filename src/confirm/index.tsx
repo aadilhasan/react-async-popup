@@ -18,7 +18,8 @@ class Confirm extends Base {
     if (!visible) return null;
 
     return (
-      <div className={styles.popupContainer}>
+      //@ts-ignore
+      <div className={styles.popupContainer} ref={this.myRef}>
         <div className={styles.confirmContainer}>
           <header>
             <h3> {heading} </h3>

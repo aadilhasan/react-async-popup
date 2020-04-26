@@ -18,7 +18,8 @@ class Modal extends Base {
     if (!visible) return null;
 
     return (
-      <div className={styles.popupContainer}>
+      //@ts-ignore
+      <div className={styles.popupContainer} ref={this.myRef}>
         <div className={styles.modalContainer}>
           <header>
             <h3> {heading} </h3>

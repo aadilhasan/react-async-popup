@@ -1,10 +1,11 @@
 import React from "react";
 import { ConfirmProps, ConfirmState, NewFun, OpenFun, PromiseCallbackFn, RenderFun } from "./types";
+import { trapFocus } from "./utils";
 
 const asyncWrap = (promise: Promise<any>): Promise<any> =>
   promise.then(res => res || true).catch(error => error || false);
 
-const ESC_KEY_CODE = 27;
+const KEYCODE_ESC = 27;
 
 export default class BasePopC extends React.Component<
   ConfirmProps,
@@ -15,6 +16,10 @@ export default class BasePopC extends React.Component<
   resolve:PromiseCallbackFn | null = null;
 
   dynamicConfig: ConfirmProps | null = null;
+
+  myRef = React.createRef();
+
+  removeFocusListener: Function | null;
 
   state = {
     visible: false
@@ -34,8 +39,7 @@ export default class BasePopC extends React.Component<
 
   handleEscape =  (event: KeyboardEvent) => {
     var key = event.which || event.keyCode;
-
-    if (key === ESC_KEY_CODE) {
+    if (key === KEYCODE_ESC) {
       this.onCancel();
       event.stopPropagation();
     }
@@ -66,7 +70,10 @@ export default class BasePopC extends React.Component<
     if (dynamicProps) {
       this.dynamicConfig = dynamicProps;
     }
-    this.setState({ visible: true }, this.disableBodyScroll);
+    this.setState({ visible: true }, () => {
+      this.disableBodyScroll();
+      this.removeFocusListener = trapFocus(this.myRef.current)
+    });
     return asyncWrap(this.promise);
   };
 
@@ -76,6 +83,8 @@ export default class BasePopC extends React.Component<
     this.resolve = null;
     this.reject = null;
     this.enableBodyScroll();
+    this.removeFocusListener && this.removeFocusListener();
+    this.removeFocusListener = null;
   };
 
   onOk = (value: any = true) => {
@@ -85,6 +94,7 @@ export default class BasePopC extends React.Component<
       },
       () => {
         this.resolve && this.resolve(value);
+        this.afterAction();
       }
     );
   };
