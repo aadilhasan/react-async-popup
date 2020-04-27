@@ -1,21 +1,26 @@
 import React from "react";
-import { ConfirmProps, ConfirmState, NewFun, OpenFun, PromiseCallbackFn, RenderFun } from "./types";
+import { NewFun, OpenFun, PromiseCallbackFn, RenderFun, BaseProps, OpenConfig } from "./types";
 import { trapFocus } from "./utils";
+import { CONTENT_ID } from "./const";
 
 const asyncWrap = (promise: Promise<any>): Promise<any> =>
   promise.then(res => res || true).catch(error => error || false);
 
 const KEYCODE_ESC = 27;
 
-export default class BasePopC extends React.Component<
-  ConfirmProps,
-  ConfirmState
-> {
-  promise: null | Promise<any> = null;
-  reject:PromiseCallbackFn |  null = null;
-  resolve:PromiseCallbackFn | null = null;
+export interface State {
+  visible: boolean;
+}
 
-  dynamicConfig: ConfirmProps | null = null;
+export default class BasePopC extends React.Component<
+  BaseProps,
+  State
+  > {
+  promise: null | Promise<any> = null;
+  reject: PromiseCallbackFn | null = null;
+  resolve: PromiseCallbackFn | null = null;
+
+  dynamicConfig: OpenConfig | null = null;
 
   myRef = React.createRef();
 
@@ -29,15 +34,45 @@ export default class BasePopC extends React.Component<
 
   static render: RenderFun
 
-  componentDidMount(){
+  componentDidMount() {
     document.addEventListener('keyup', this.handleEscape);
   }
 
-  componentWillMount(){
+  componentWillMount() {
     document.removeEventListener('keyup', this.handleEscape);
   }
 
-  handleEscape =  (event: KeyboardEvent) => {
+  renderFooter(styles: any, footer?: React.ReactNode) {
+
+    if (footer === null) return null;
+
+    let contentToRender = this.getRenderableWithProps(footer);
+
+    if (contentToRender !== undefined) {
+      return <div className={styles.footer}>{contentToRender}</div>;
+    }
+
+    return (
+      <div className={styles.footer}>
+        <button className={styles.action} onClick={this.onCancel}>
+          {" "}
+          Cancel{" "}
+        </button>
+        <button className={styles.action} onClick={this.onOk}>
+          {" "}
+          Ok{" "}
+        </button>
+      </div>
+    );
+  }
+
+  rendercontent(styles: any, content: React.ReactNode) {
+    if (this.rendercontent === null) return null;
+    let contentToRender = this.getRenderableWithProps(content);
+    return contentToRender ? <div id={CONTENT_ID} className={styles.content}>{contentToRender}</div> : null;
+  }
+
+  handleEscape = (event: KeyboardEvent) => {
     var key = event.which || event.keyCode;
     if (key === KEYCODE_ESC) {
       this.onCancel();
@@ -45,23 +80,23 @@ export default class BasePopC extends React.Component<
     }
   };
 
-  getRenderableWithProps (component: any) {
+  getRenderableWithProps(component: any) {
     let contentToRender;
 
-    if(component === null) return null;
+    if (component === null) return null;
 
     if (component && typeof component === "function") {
       contentToRender = component({ cancel: this.onCancel, success: this.onOk });
-    }else if (React.isValidElement(component)){
+    } else if (React.isValidElement(component)) {
       contentToRender = <component.type cancel={this.onCancel} success={this.onOk} />
-    }else{
+    } else {
       contentToRender = component;
     }
 
     return contentToRender;
   }
 
-  open:OpenFun = (dynamicProps: ConfirmProps) => {
+  open: OpenFun = (dynamicProps?: OpenConfig) => {
     this.dynamicConfig = null;
     this.promise = new Promise((resolve, reject) => {
       this.resolve = resolve;

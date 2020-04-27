@@ -4,14 +4,15 @@ import ReactDOM from "react-dom";
 import { HEADER_ID, CONTENT_ID } from "../const"
 import styles from "./style.module.scss";
 import {
-  FooterType,
-  Config,
-  NewConfirmReturnType
+  NewConfirmReturnType,
+  OpenFun,
+  BaseProps,
+  DestroyCallbackFun
 } from "../types";
 
 class Modal extends Base {
   render() {
-    const { heading, message, body, footer, ...aria } = this.dynamicConfig || {};
+    const { title, content, footer, ...aria } = this.dynamicConfig || {};
     const { visible } = this.state;
     const { ariaLabelledby = HEADER_ID, ariaDescribedby = CONTENT_ID } = { ...this.props, ...aria };
 
@@ -20,46 +21,18 @@ class Modal extends Base {
     return (
       //@ts-ignore
       <div className={styles.popupContainer} ref={this.myRef}>
-        <div role="dialog" aria-modal="true" aria-labelledby={ariaLabelledby} aria-describedby={ariaDescribedby} className={styles.modalContainer}>
-          <h3 id={HEADER_ID}> {heading} </h3>
-          {this.renderBody(message, body)}
-          {this.renderFooter(footer)}
+        <div role="dialog" aria-modal="true" aria-labelledby={ariaLabelledby} aria-describedby={ariaDescribedby} className={styles.container}>
+          {title && <div className={styles.title} id={HEADER_ID}> {title} </div>}
+          {this.rendercontent(styles, content)}
+          {this.renderFooter(styles, footer)}
         </div>
       </div>
     );
   }
-
-  private renderBody(message: any, body: any) {
-    let contentToRender = this.getRenderableWithProps(body);
-    return <div id={CONTENT_ID} className={styles.modalBody}>{contentToRender || message}</div>;
-  }
-
-  private renderFooter(footer?: FooterType) {
-
-    let contentToRender = this.getRenderableWithProps(footer);
-
-    if (contentToRender !== undefined) {
-      return <div className={styles.footer}>{contentToRender}</div>;
-    }
-
-    return (
-      <div className={styles.footer}>
-        <button className={styles.action} onClick={this.onCancel}>
-          {" "}
-          Cancel{" "}
-        </button>
-        <button className={styles.action} onClick={this.onOk}>
-          {" "}
-          ok{" "}
-        </button>
-      </div>
-    );
-  }
-
 }
 
-Modal.new = (config: Config): Promise<NewConfirmReturnType> => {
-  const { container } = config || {};
+Modal.new = (config?: BaseProps): Promise<NewConfirmReturnType> => {
+  const { container, ...rest } = config || {} as BaseProps;
   const div = document.createElement("div");
   if (container && container instanceof Element) {
     container.appendChild(div);
@@ -80,11 +53,11 @@ Modal.new = (config: Config): Promise<NewConfirmReturnType> => {
   return new Promise(resolve => {
     const getRef = (ref: Modal) => {
       resolve({
-        show: ref.open,
-        destroy
+        show: ref.open as OpenFun,
+        destroy: destroy as DestroyCallbackFun
       });
     };
-    ReactDOM.render(<Modal ref={getRef} />, div);
+    ReactDOM.render(<Modal {...rest} ref={getRef} />, div);
   });
 };
 

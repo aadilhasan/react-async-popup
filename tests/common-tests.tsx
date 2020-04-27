@@ -49,27 +49,27 @@ export default function (Component: any, name: string, moreTests?:Function) {
         });
 
         it(" should render header", async () => {
-            const heading = "This is Heading";
+            const title = "This is Heading";
             // })
             const { show } = await Component.new({ container });
             show({
-                heading,
+                title,
             })
             let header = container.querySelector("#" + HEADER_ID);
-            expect(heading).toBe(header.textContent.trim());
+            expect(title).toBe(header.textContent.trim());
         });
 
         it(" should render header and body", async () => {
-            const heading = "This is Heading";
+            const title = "This is Heading";
             const body = "This is alert body";
             // })
             const { show } = await Component.new({ container });
             show({
-                heading,
-                body: () => <>{body}</>,
+                title,
+                content: () => <>{body}</>,
             });
             let header = container.querySelector("#" + HEADER_ID);
-            expect(header.textContent.trim()).toBe(heading);
+            expect(header.textContent.trim()).toBe(title);
             let content = container.querySelector("#" + CONTENT_ID);
             expect(content.textContent.trim()).toBe(body);
         });
