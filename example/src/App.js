@@ -31,6 +31,8 @@ Modal.new().then(({ show }) => {
 })
 
 export default function App() {
+  const refContainer = React.useRef(null);
+
   const toggleAlert = async () => {
     const isSuccess = await showAlert({
       heading : 'Confirm',
@@ -54,8 +56,20 @@ export default function App() {
     console.log(' use entered name is ', name)
   }
 
+  const openModalWithContainer = async () => {
+    const {show} = await Modal.new({
+      container: refContainer.current
+    });
+    const name = await show({
+      heading: 'Modal with different container ',
+      body: <ModalBody />,
+      footer: null,
+    });
+    console.log(' use entered name is ', name)
+  }
+
   return (
-    <div className='App'>
+    <div className='App' ref={refContainer}>
       <br/>
       <br/>
       <button onClick={toggleAlert}> Delete account Confirm </button>
@@ -63,6 +77,8 @@ export default function App() {
       <button onClick={toggleAlert2}> SHOW Confirm 2 </button>
       <hr />
       <button onClick={openModal}> show modal </button>
+      <hr />
+      <button onClick={openModalWithContainer}> mount modal to diffent container </button>
     </div>
   )
 }
