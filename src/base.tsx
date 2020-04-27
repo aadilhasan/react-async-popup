@@ -1,7 +1,8 @@
 import React from "react";
 import { NewFun, OpenFun, PromiseCallbackFn, RenderFun, BaseProps, OpenConfig } from "./types";
 import { trapFocus } from "./utils";
-import { CONTENT_ID } from "./const";
+import { CONTENT_ID, HEADER_ID } from "./const";
+import { ComponentType } from "./enums";
 
 const asyncWrap = (promise: Promise<any>): Promise<any> =>
   promise.then(res => res || true).catch(error => error || false);
@@ -42,6 +43,29 @@ export default class BasePopC extends React.Component<
     document.removeEventListener('keyup', this.handleEscape);
   }
 
+  render() {
+    const { title, content, footer, ...aria } = this.dynamicConfig || {};
+    const { visible } = this.state;
+    const { ariaLabelledby = HEADER_ID, ariaDescribedby = CONTENT_ID } = { ...this.props, ...aria };
+    const styles = this.styles
+    const role = ComponentType.Confirm === this.props.type ? 'alertdialog' : 'dialog';
+
+    if (!visible) return null;
+
+    return (
+      //@ts-ignore
+      <div className={`${styles.popupContainer}`} ref={this.myRef}>
+        <div role={role} aria-modal="true" aria-labelledby={ariaLabelledby} aria-describedby={ariaDescribedby} className={styles.container}>
+          {title && <div className={styles.title} id={HEADER_ID}> {title} </div>}
+          {this.rendercontent(styles, content)}
+          {this.renderFooter(styles, footer)}
+        </div>
+      </div>
+    );
+  }
+
+
+
   renderFooter(styles: any, footer?: React.ReactNode) {
 
     if (footer === null) return null;
@@ -70,6 +94,10 @@ export default class BasePopC extends React.Component<
     if (this.rendercontent === null) return null;
     let contentToRender = this.getRenderableWithProps(content);
     return contentToRender ? <div id={CONTENT_ID} className={styles.content}>{contentToRender}</div> : null;
+  }
+
+  get styles() {
+    return {} as any
   }
 
   handleEscape = (event: KeyboardEvent) => {

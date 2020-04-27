@@ -1,3 +1,5 @@
+import ReactDOM from "react-dom";
+
 const KEYCODE_TAB = 9;
 
 export const trapFocus = (element: any) => {
@@ -41,3 +43,22 @@ export const trapFocus = (element: any) => {
     }
 }
 
+export const getContainer = (container?: HTMLElement) => {
+    const div = document.createElement("div");
+    if (container && container instanceof Element) {
+        container.appendChild(div);
+    } else {
+        document.body.appendChild(div);
+    }
+    return div;
+}
+
+export const unmountReactComponent = (div: HTMLElement): Promise<void>  => {
+    return new Promise(resolve => {
+        ReactDOM.unmountComponentAtNode(div);
+        if (div.parentNode) {
+          div.parentNode.removeChild(div);
+        }
+        resolve();
+      });
+}

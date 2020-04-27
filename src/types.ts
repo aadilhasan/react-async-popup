@@ -1,3 +1,5 @@
+import { ComponentType } from "./enums";
+
 export interface RenderFun {
   (): JSX.Element;
 }
@@ -41,11 +43,13 @@ export interface BaseConfig {
   closeOnEscape?: boolean,
   ariaLabelledby?: string;
   ariaDescribedby?: string;
+  wrapClassName?:string;
 }
 
 export interface BaseProps extends BaseConfig {
   destroyOnClose?: boolean,
   container?: HTMLElement;
+  type?: ComponentType;
 }
 
 
