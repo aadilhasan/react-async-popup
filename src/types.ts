@@ -9,7 +9,7 @@ export interface ToggleFun {
 }
 
 export interface CallbackFuns {
-  success: ToggleFun;
+  ok: ToggleFun;
   cancel: ToggleFun;
 }
 

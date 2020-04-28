@@ -13,10 +13,10 @@ function alertbody() {
   return <div>Are you a good boy</div>
 }
 
-function alertFooter({ cancel, success }) {
+function alertFooter({ cancel, ok }) {
   return (
     <div>
-      <button onClick={success}> yes</button>
+      <button onClick={ok}> yes</button>
       <button onClick={cancel}> no </button>
     </div>
   )
@@ -104,11 +104,11 @@ export default function App() {
   )
 }
 
-const ModalBody = ({ success, cancel }) => {
+const ModalBody = ({ ok, cancel }) => {
   const onSubmit = (e) => {
     e.preventDefault()
     const { value: name } = e.target.elements['name-input']
-    success(name)
+    ok(name)
   }
   return (
     <div>

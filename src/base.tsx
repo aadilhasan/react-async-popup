@@ -137,9 +137,9 @@ export default class BasePopC extends React.Component<
     let contentToRender;
     if (component === null) return null;
     if (component && typeof component === "function") {
-      contentToRender = component({ cancel: this.onCancel, success: this.onOk });
+      contentToRender = component({ cancel: this.onCancel, ok: this.onOk });
     } else if (React.isValidElement(component)) {
-      contentToRender = <component.type cancel={this.onCancel} success={this.onOk} />
+      contentToRender = <component.type cancel={this.onCancel} ok={this.onOk} />
     } else {
       contentToRender = component;
     }
