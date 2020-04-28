@@ -103,10 +103,10 @@ export default class BasePopC extends React.Component<
 
     return (
       <div className={styles.footer}>
-        {closable !== false && <button className={styles.action} onClick={this.onCancel}>
+        {closable !== false && <button className={styles.action} onClick={this.handleCancel}>
           {cancelText || 'Cancel'}
         </button>}
-        <button className={styles.action} onClick={this.onOk}>
+        <button className={styles.action} onClick={this.handleOK}>
           {okText || 'Ok'}
         </button>
       </div>
@@ -204,6 +204,14 @@ export default class BasePopC extends React.Component<
       }
     );
   };
+
+  handleOK = () => {
+    this.onOk(true)
+  }
+
+  handleCancel = () => {
+    this.onCancel(false)
+  }
 
   disableBodyScroll() {
     let { body } = window.document;
