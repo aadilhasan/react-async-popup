@@ -9,6 +9,18 @@ const asyncWrap = (promise: Promise<any>): Promise<any> =>
 
 const KEYCODE_ESC = 27;
 
+const DEFAULTS = {
+  closeOnEscape: true,
+}
+
+const MODAL_DEFAULTS_PROPS = {
+  maskClosable: true,
+}
+
+const CONFIRM_DEFAULTS_PROPS = {
+  maskClosable: false,
+}
+
 export interface State {
   visible: boolean;
 }
@@ -44,29 +56,42 @@ export default class BasePopC extends React.Component<
   }
 
   render() {
-    const { title, content, footer, ...aria } = this.dynamicConfig || {};
+    const { title, popupStyle, wrapClassName, aria } = this.allProps;
     const { visible } = this.state;
-    const { ariaLabelledby = HEADER_ID, ariaDescribedby = CONTENT_ID } = { ...this.props, ...aria };
+    const { labelledby = HEADER_ID, describedby = CONTENT_ID } = aria || {};
     const styles = this.styles
-    const role = ComponentType.Confirm === this.props.type ? 'alertdialog' : 'dialog';
+    const role = this.props.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
 
     if (!visible) return null;
 
     return (
-      //@ts-ignore
-      <div className={`${styles.popupContainer}`} ref={this.myRef}>
-        <div role={role} aria-modal="true" aria-labelledby={ariaLabelledby} aria-describedby={ariaDescribedby} className={styles.container}>
+      <div
+        className={`${styles.popupContainer}${wrapClassName ? wrapClassName : ''}`}
+        onClick={this.handleMaskClick}
+        //@ts-ignore
+        ref={this.myRef}>
+        <div
+          role={role}
+          aria-modal="true"
+          aria-labelledby={labelledby}
+          aria-describedby={describedby}
+          className={styles.container}
+          style={popupStyle || {}} >
           {title && <div className={styles.title} id={HEADER_ID}> {title} </div>}
-          {this.rendercontent(styles, content)}
-          {this.renderFooter(styles, footer)}
+          {this.renderContent(styles)}
+          {this.renderFooter(styles)}
         </div>
       </div>
     );
   }
 
+  get allProps() {
+    const componentDefaults = this.props.type === ComponentType.Confirm ? CONFIRM_DEFAULTS_PROPS : MODAL_DEFAULTS_PROPS;
+    return { ...DEFAULTS, ...componentDefaults, ...this.props, ...(this.dynamicConfig || {}) };
+  }
 
-
-  renderFooter(styles: any, footer?: React.ReactNode) {
+  renderFooter(styles: any) {
+    const { footer, okText, cancelText, closable } = this.allProps;
 
     if (footer === null) return null;
 
@@ -78,20 +103,19 @@ export default class BasePopC extends React.Component<
 
     return (
       <div className={styles.footer}>
-        <button className={styles.action} onClick={this.onCancel}>
-          {" "}
-          Cancel{" "}
-        </button>
+        {closable !== false && <button className={styles.action} onClick={this.onCancel}>
+          {cancelText || 'Cancel'}
+        </button>}
         <button className={styles.action} onClick={this.onOk}>
-          {" "}
-          Ok{" "}
+          {okText || 'Ok'}
         </button>
       </div>
     );
   }
 
-  rendercontent(styles: any, content: React.ReactNode) {
-    if (this.rendercontent === null) return null;
+  renderContent(styles: any) {
+    const { content } = this.allProps;
+    if (content === null) return null;
     let contentToRender = this.getRenderableWithProps(content);
     return contentToRender ? <div id={CONTENT_ID} className={styles.content}>{contentToRender}</div> : null;
   }
@@ -101,8 +125,9 @@ export default class BasePopC extends React.Component<
   }
 
   handleEscape = (event: KeyboardEvent) => {
-    var key = event.which || event.keyCode;
-    if (key === KEYCODE_ESC) {
+    const key = event.which || event.keyCode;
+    const { closeOnEscape, closable } = this.allProps
+    if ((closable !== false || closeOnEscape !== false) && key === KEYCODE_ESC) {
       this.onCancel();
       event.stopPropagation();
     }
@@ -110,9 +135,7 @@ export default class BasePopC extends React.Component<
 
   getRenderableWithProps(component: any) {
     let contentToRender;
-
     if (component === null) return null;
-
     if (component && typeof component === "function") {
       contentToRender = component({ cancel: this.onCancel, success: this.onOk });
     } else if (React.isValidElement(component)) {
@@ -149,6 +172,14 @@ export default class BasePopC extends React.Component<
     this.removeFocusListener && this.removeFocusListener();
     this.removeFocusListener = null;
   };
+
+  handleMaskClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { maskClosable, closable } = this.allProps;
+    if (closable === false) return
+    if (maskClosable !== false && this.myRef.current === e.target) {
+      this.onCancel();
+    }
+  }
 
   onOk = (value: any = true) => {
     this.setState(

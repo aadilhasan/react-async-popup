@@ -41,9 +41,11 @@ export interface BaseConfig {
   maskClosable?: boolean,
   closable?: boolean,
   closeOnEscape?: boolean,
-  ariaLabelledby?: string;
-  ariaDescribedby?: string;
-  wrapClassName?:string;
+  wrapClassName?: string;
+  aria?: {
+    labelledby?: string;
+    describedby?: string;
+  }
 }
 
 export interface BaseProps extends BaseConfig {

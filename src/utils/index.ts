@@ -7,6 +7,7 @@ export const trapFocus = (element: any) => {
     if (!element) return () => { }
     const focusedBeforModalOpen = document.activeElement;
     const focusableEls = element.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+    if (focusableEls.length === 0) return () => { }
     const firstFocusableEl: any = focusableEls[0];
     const lastFocusableEl: any = focusableEls[focusableEls.length - 1];
 
@@ -53,12 +54,12 @@ export const getContainer = (container?: HTMLElement) => {
     return div;
 }
 
-export const unmountReactComponent = (div: HTMLElement): Promise<void>  => {
+export const unmountReactComponent = (div: HTMLElement): Promise<void> => {
     return new Promise(resolve => {
         ReactDOM.unmountComponentAtNode(div);
         if (div.parentNode) {
-          div.parentNode.removeChild(div);
+            div.parentNode.removeChild(div);
         }
         resolve();
-      });
+    });
 }

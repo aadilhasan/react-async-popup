@@ -9,7 +9,7 @@ Confirm.new().then(({ show }) => {
   showAlert = show
 })
 
-function alertbody({ cancel, success }) {
+function alertbody() {
   return <div>Are you a good boy</div>
 }
 
@@ -40,16 +40,23 @@ export default function App() {
   const toggleAlert2 = async () => {
     const isSuccess = await showAlert({
       content: alertbody,
-      footer: alertFooter
+      footer: alertFooter,
+      popupStyle: {
+        borderColor: 'red'
+      }
     })
-    const secondResult = await showAlert({ content: () => <h3> why ? </h3> })
-    console.log(' use said ', isSuccess, secondResult)
+    const secondResult = await showAlert({
+      content: () => <h3> Are you sure ? </h3>,
+      okText: 'Yes I am',
+      cancelText: 'Not at all'
+    })
+    console.log(' you said ', isSuccess, secondResult)
   }
 
   const openModal = async () => {
     const name = await showModal({
       title: 'Hi this is fully accessible modal',
-      content: 'Modal Body',
+      content: 'Modal Body'
       // footer: null
     })
     console.log(' use entered name is ', name)
@@ -62,9 +69,20 @@ export default function App() {
     const name = await show({
       title: 'Modal with different container ',
       content: <ModalBody />,
-      footer: null
+      footer: null,
+      closeOnEscape: false
     })
     console.log(' use entered name is ', name)
+  }
+
+  const notClosableAlert = async () => {
+    const { show } = await Confirm.new()
+    const name = await show({
+      title: ' I am not closable Alert',
+      // footer: null,
+      closable: false,
+      okText: 'CLOSE'
+    })
   }
 
   return (
@@ -81,6 +99,7 @@ export default function App() {
         {' '}
         mount modal to diffent container{' '}
       </button>
+      <button onClick={notClosableAlert}>notClosableAlert</button>
     </div>
   )
 }
