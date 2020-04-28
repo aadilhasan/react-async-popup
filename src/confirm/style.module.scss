@@ -4,11 +4,10 @@
   padding: 20px;
 }
 
-.title {
-  font-size: 1.17em;
-  font-weight: bold;
+.titleContainer {
+  margin-bottom: 10px;
 }
 
-.title + .content {
+.titleContainer + .content {
   margin-top: 10px;
 }

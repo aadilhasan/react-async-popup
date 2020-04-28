@@ -2,21 +2,24 @@
 
 .container {
   min-height: 100px;
+  width: 500px;
+}
+
+.titleContainer {
   padding: 15px;
+  border-bottom: 1px solid gray;
 }
 
-.title {
-  padding: 5px 0px;
-}
-
-.title + .content {
+.titleContainer + .content {
   margin-top: 10px;
 }
 
 .content {
-  padding: 10px 0px;
+  padding: 10px 15px;
+  flex: 1;
 }
 
-.modalBody {
-  flex: 1;
+.footer {
+  padding: 15px;
+  border-top: 1px solid #d6d6d6;
 }
