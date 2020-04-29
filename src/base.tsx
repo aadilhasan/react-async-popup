@@ -172,11 +172,12 @@ export default class BasePopC extends React.Component<
 
   getRenderableWithProps(component: any) {
     let contentToRender;
+    const props = { cancel: this.onCancel, ok: this.onOk };
     if (component === null) return null;
     if (component && typeof component === "function") {
-      contentToRender = component({ cancel: this.onCancel, ok: this.onOk });
+      contentToRender = component(props);
     } else if (React.isValidElement(component)) {
-      contentToRender = <component.type cancel={this.onCancel} ok={this.onOk} />
+      contentToRender = React.cloneElement(component, props)
     } else {
       contentToRender = component;
     }
