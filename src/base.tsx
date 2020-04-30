@@ -3,6 +3,7 @@ import { NewFun, OpenFun, PromiseCallbackFn, RenderFun, BaseProps, OpenConfig } 
 import { trapFocus } from "./utils";
 import { CONTENT_ID, HEADER_ID } from "./const";
 import { ComponentType } from "./enums";
+import Animate from "./utils/animate";
 
 const asyncWrap = (promise: Promise<any>): Promise<any> =>
   promise.then(res => res || true).catch(error => error || false);
@@ -39,6 +40,11 @@ export default class BasePopC extends React.Component<
 
   removeFocusListener: Function | null;
 
+  resolved: any = {
+    hasResolved: true,
+    value: void 0
+  };
+
   state = {
     visible: false
   };
@@ -62,27 +68,38 @@ export default class BasePopC extends React.Component<
     const styles = this.styles
     const role = this.props.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
 
-    if (!visible) return null;
+    // if (!visible) return null;
 
     return (
-      <div
-        className={`${styles.popupContainer}${wrapClassName ? wrapClassName : ''}`}
-        onClick={this.handleMaskClick}
-        //@ts-ignore
-        ref={this.myRef}>
+      <Animate
+        show={visible}
+        classNames={{
+          beforeEnter: styles.beforeEnter,
+          enter: styles.enter,
+          active: styles.active,
+          exit: styles.exit
+        }}
+        onEnter={this.onVisible}
+        onExit={this.handleModalExit}>
         <div
-          role={role}
-          aria-modal="true"
-          aria-labelledby={labelledby}
-          aria-describedby={describedby}
-          className={styles.container}
-          style={popupStyle || {}} >
-          {this.renderCloseButton(styles)}
-          {this.renderHeader(styles)}
-          {this.renderContent(styles)}
-          {this.renderFooter(styles)}
+          className={`${styles.popupContainer}${wrapClassName ? wrapClassName : ''}`}
+          onClick={this.handleMaskClick}
+          //@ts-ignore
+          ref={this.myRef}>
+          <div
+            role={role}
+            aria-modal="true"
+            aria-labelledby={labelledby}
+            aria-describedby={describedby}
+            className={styles.container}
+            style={popupStyle || {}} >
+            {this.renderCloseButton(styles)}
+            {this.renderHeader(styles)}
+            {this.renderContent(styles)}
+            {this.renderFooter(styles)}
+          </div>
         </div>
-      </div>
+      </Animate>
     );
   }
 
@@ -194,12 +211,14 @@ export default class BasePopC extends React.Component<
     if (dynamicProps) {
       this.dynamicConfig = dynamicProps;
     }
-    this.setState({ visible: true }, () => {
-      this.disableBodyScroll();
-      this.removeFocusListener = trapFocus(this.myRef.current)
-    });
+    this.setState({ visible: true });
     return asyncWrap(this.promise);
   };
+
+  onVisible = () => {
+    this.disableBodyScroll();
+    this.removeFocusListener = trapFocus(this.myRef.current)
+  }
 
   afterAction = () => {
     this.dynamicConfig = null;
@@ -219,14 +238,25 @@ export default class BasePopC extends React.Component<
     }
   }
 
+  handleModalExit = () => {
+    if (this.resolved.hasResolved == true) {
+      this.resolve && this.resolve(this.resolved.value);
+    } else {
+      this.reject && this.reject(this.resolved.value);
+    }
+    this.afterAction();
+  }
+
   onOk = (value: any = true) => {
     this.setState(
       {
         visible: false
       },
       () => {
-        this.resolve && this.resolve(value);
-        this.afterAction();
+        this.resolved = {
+          hasResolved: true,
+          value,
+        };
       }
     );
   };
@@ -237,8 +267,10 @@ export default class BasePopC extends React.Component<
         visible: false
       },
       () => {
-        this.reject && this.reject(value);
-        this.afterAction();
+        this.resolved = {
+          hasResolved: false,
+          value,
+        };
       }
     );
   };

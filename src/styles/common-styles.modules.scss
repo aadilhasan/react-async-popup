@@ -1,12 +1,14 @@
+%flexPopContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .popupContainer {
   position: fixed;
   left: 0;
   top: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background-color: rgba(0, 0, 0, 0.3);
   z-index: 999;
 }
@@ -17,7 +19,8 @@
   width: 300px;
   display: flex;
   flex-direction: column;
-  animation: open 0.3s ease-out;
+  will-change: transform;
+  margin: auto;
 }
 
 .footer {
@@ -51,11 +54,38 @@
   top: 14px;
 }
 
-@keyframes open {
-  0% {
-    transform: scale(0, 0);
+// animation classes
+
+.beforeEnter {
+  opacity: 0;
+  @extend %flexPopContainer;
+  .container {
+    transform: scale(0.9);
   }
-  100% {
-    transform: scale(1, 1);
+}
+
+.enter {
+  opacity: 1;
+  transition: opacity 300ms;
+  @extend %flexPopContainer;
+  .container {
+    transform: translateX(0);
+    transform: scale(1);
+    transition: transform 250ms;
+    transition-timing-function: ease-in;
+  }
+}
+.active {
+  opacity: 1;
+  @extend %flexPopContainer;
+}
+.exit {
+  opacity: 0;
+  transition: opacity 300ms;
+  @extend %flexPopContainer;
+  .container {
+    transform: scale(0.9);
+    transition: transform 250ms;
+    transition-timing-function: ease-in;
   }
 }
