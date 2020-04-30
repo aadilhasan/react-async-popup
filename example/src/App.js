@@ -85,6 +85,23 @@ export default function App() {
     })
   }
 
+  const animatedAlert = async () => {
+    const { show } = await Confirm.new({
+      transitionAnimationClasses: {
+        beforeEnter: 'before',
+        enter: 'enter',
+        active: 'active',
+        exit: 'exit'
+      }
+    })
+    const name = await show({
+      title: ' I am not closable Alert',
+      // footer: null,
+      closable: false,
+      okText: 'CLOSE'
+    })
+  }
+
   return (
     <div className='App' ref={refContainer}>
       <br />
@@ -100,6 +117,8 @@ export default function App() {
         mount modal to diffent container{' '}
       </button>
       <button onClick={notClosableAlert}>notClosableAlert</button>
+      <hr />
+      <button onClick={animatedAlert}> modalWithDifferentAnimation </button>
     </div>
   )
 }

@@ -34,6 +34,13 @@ export interface PromiseCallbackFn {
   (value: any): void
 }
 
+export interface AnimationClasses {
+  beforeEnter: string,
+  enter: string,
+  active: string,
+  exit: string
+}
+
 export interface BaseConfig {
   popupStyle?: React.CSSProperties,
   okText?: string,
@@ -42,6 +49,7 @@ export interface BaseConfig {
   closable?: boolean,
   closeOnEscape?: boolean,
   wrapClassName?: string;
+  transitionAnimationClasses?: AnimationClasses,
   aria?: {
     labelledby?: string;
     describedby?: string;

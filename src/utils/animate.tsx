@@ -9,6 +9,7 @@ interface AnimateProps {
         active?: string;
         exit?: string;
     };
+    timeout?: number;
     onExit?: Function;
     onEnter?: Function;
 }
@@ -25,6 +26,7 @@ export default class Animate extends React.Component<
     exiting = false;
     node: any = null;
     transitonEnded = false;
+    transitionStarted = false;
 
     state = {
         visible: false
@@ -32,7 +34,6 @@ export default class Animate extends React.Component<
 
     componentDidUpdate({ show }: AnimateProps) {
         const { enter, active, exit } = this.classNames;
-
         if (!show && this.props.show) {
             if (this.exiting) {
                 this.onEntering();
@@ -50,6 +51,11 @@ export default class Animate extends React.Component<
             }
             this.exiting = true;
             this.transitonEnded = false;
+            setTimeout(() => {
+                if (!this.transitionStarted) {
+                    this.onTransitonEnd();
+                }
+            }, this.props.timeout || 0);
             this.removeClass(active);
             this.addClass(exit);
         }
@@ -65,7 +71,6 @@ export default class Animate extends React.Component<
         this.entering = true;
         this.exiting = false;
         this.transitonEnded = false;
-        console.log("this.node.classList", this.node.classList);
         this.removeClass(exit);
         this.addClass(beforeEnter);
         setTimeout(() => {
@@ -74,6 +79,11 @@ export default class Animate extends React.Component<
             this.removeClass(beforeEnter);
             this.addClass(enter);
             onEnter && onEnter();
+            setTimeout(() => {
+                if (!this.transitionStarted) {
+                    this.onTransitonEnd();
+                }
+            }, this.props.timeout || 0);
         }, 0);
     }
 
@@ -89,6 +99,10 @@ export default class Animate extends React.Component<
         return this.props.classNames || {};
     }
 
+    onTransitionStart = () => {
+        this.transitionStarted = true;
+    };
+
     onTransitonEnd = () => {
         const { enter, active, exit } = this.classNames;
         // transition ended gets fired multiple time, depending on no of properties being
@@ -96,6 +110,7 @@ export default class Animate extends React.Component<
         if (this.transitonEnded) {
             return;
         }
+        this.transitionStarted = false;
         this.transitonEnded = true;
         if (this.entering) {
             this.node.classList.remove(enter);
@@ -126,6 +141,7 @@ export default class Animate extends React.Component<
                 children={this.props.children}
                 onMount={this.onChildrenMount}
                 onTransitonEnd={this.onTransitonEnd}
+                onTransitonStart={this.onTransitionStart}
             />
         );
     }
@@ -134,18 +150,21 @@ export default class Animate extends React.Component<
 interface AnimationHelperProps {
     onMount: Function;
     onTransitonEnd: Function;
+    onTransitonStart: Function;
 }
 
 class AnimationHelper extends React.Component<AnimationHelperProps> {
     componentDidMount() {
         const node = ReactDOM.findDOMNode(this) as HTMLElement;
         node.addEventListener("transitionend", this.handleTransitionEnd);
+        node.addEventListener("transitionstart", this.handleTransitionStart);
         this.props.onMount(node);
     }
 
     componentWillUnmount() {
         const node = ReactDOM.findDOMNode(this) as HTMLElement;
         node.removeEventListener("transitionend", this.handleTransitionEnd);
+        node.removeEventListener("transitionstart", this.handleTransitionStart);
     }
 
     handleTransitionEnd = (e: TransitionEvent) => {
@@ -153,6 +172,14 @@ class AnimationHelper extends React.Component<AnimationHelperProps> {
         // as childrend my be transitioning even ofter the parent has stopped
         if (e.target === e.currentTarget) {
             this.props.onTransitonEnd();
+        }
+    };
+
+    handleTransitionStart = (e: TransitionEvent) => {
+        // only call onTransitonEnd for tansitions happening on the top element
+        // as childrend my be transitioning even ofter the parent has stopped
+        if (e.target === e.currentTarget) {
+            this.props.onTransitonStart();
         }
     };
 

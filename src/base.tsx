@@ -26,7 +26,7 @@ export interface State {
   visible: boolean;
 }
 
-export default class BasePopC extends React.Component<
+export default class Popup extends React.Component<
   BaseProps,
   State
   > {
@@ -62,23 +62,25 @@ export default class BasePopC extends React.Component<
   }
 
   render() {
-    const { popupStyle, wrapClassName, aria } = this.allProps;
+    const { popupStyle, wrapClassName, aria, transitionAnimationClasses } = this.allProps;
     const { visible } = this.state;
     const { labelledby = HEADER_ID, describedby = CONTENT_ID } = aria || {};
     const styles = this.styles
     const role = this.props.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
+    const defaultAnimationClasses = {
+      beforeEnter: styles.beforeEnter,
+      enter: styles.enter,
+      active: styles.active,
+      exit: styles.exit
+    }
 
-    // if (!visible) return null;
+    const animationClasses = transitionAnimationClasses ? transitionAnimationClasses : defaultAnimationClasses;
 
     return (
       <Animate
         show={visible}
-        classNames={{
-          beforeEnter: styles.beforeEnter,
-          enter: styles.enter,
-          active: styles.active,
-          exit: styles.exit
-        }}
+        classNames={animationClasses}
+        timeout={100}
         onEnter={this.onVisible}
         onExit={this.handleModalExit}>
         <div
