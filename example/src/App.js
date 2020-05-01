@@ -9,18 +9,14 @@ Confirm.new().then(({ show }) => {
   showAlert = show
 })
 
-function alertbody({ cancel, success }) {
-  return (
-    <div>
-      <h1> Are you a good boy </h1>
-    </div>
-  )
+function alertbody() {
+  return <div>Are you a good boy</div>
 }
 
-function alertFooter({ cancel, success }) {
+function alertFooter({ cancel, ok }) {
   return (
     <div>
-      <button onClick={success}> yes</button>
+      <button onClick={ok}> yes</button>
       <button onClick={cancel}> no </button>
     </div>
   )
@@ -31,68 +27,93 @@ Modal.new().then(({ show }) => {
 })
 
 export default function App() {
-  const refContainer = React.useRef(null);
+  const refContainer = React.useRef(null)
 
   const toggleAlert = async () => {
     const isSuccess = await showAlert({
-      heading : 'Confirm',
-      body: () => 'Are you sure you want to delete your account ?'
+      title: 'Confirm',
+      content: () => 'Are you sure you want to delete your account ?'
     })
     console.log(' alert is done ', isSuccess)
   }
 
   const toggleAlert2 = async () => {
-    const isSuccess = await showAlert({ body: alertbody, footer: alertFooter })
-    const secondResult = await showAlert({ body: () => <h1> why ? </h1> })
-    console.log(' use said ', isSuccess, secondResult)
+    const isSuccess = await showAlert({
+      content: alertbody,
+      footer: alertFooter,
+      popupStyle: {
+        borderColor: 'red'
+      }
+    })
+    const secondResult = await showAlert({
+      content: () => <h3> Are you sure ? </h3>,
+      okText: 'Yes I am',
+      cancelText: 'Not at all'
+    })
+    console.log(' you said ', isSuccess, secondResult)
   }
 
   const openModal = async () => {
     const name = await showModal({
-      heading: 'Hi this is fully accessible modal',
-      body: <ModalBody />,
-      footer: null,
-    });
+      title: 'Hi this is fully accessible modal',
+      content: 'Modal Body'
+      // footer: null
+    })
     console.log(' use entered name is ', name)
   }
 
   const openModalWithContainer = async () => {
-    const {show} = await Modal.new({
+    const { show } = await Modal.new({
       container: refContainer.current
-    });
+    })
     const name = await show({
-      heading: 'Modal with different container ',
-      body: <ModalBody />,
+      title: 'Modal with different container ',
+      content: <ModalBody />,
       footer: null,
-    });
+      closeOnEscape: false
+    })
     console.log(' use entered name is ', name)
+  }
+
+  const notClosableAlert = async () => {
+    const { show } = await Confirm.new()
+    const name = await show({
+      title: ' I am not closable Alert',
+      // footer: null,
+      closable: false,
+      okText: 'CLOSE'
+    })
   }
 
   return (
     <div className='App' ref={refContainer}>
-      <br/>
-      <br/>
+      <br />
+      <br />
       <button onClick={toggleAlert}> Delete account Confirm </button>
-      <hr/>
+      <hr />
       <button onClick={toggleAlert2}> SHOW Confirm 2 </button>
       <hr />
       <button onClick={openModal}> show modal </button>
       <hr />
-      <button onClick={openModalWithContainer}> mount modal to diffent container </button>
+      <button onClick={openModalWithContainer}>
+        {' '}
+        mount modal to diffent container{' '}
+      </button>
+      <button onClick={notClosableAlert}>notClosableAlert</button>
     </div>
   )
 }
 
-const ModalBody = ({ success, cancel }) => {
+const ModalBody = ({ ok, cancel }) => {
   const onSubmit = (e) => {
     e.preventDefault()
     const { value: name } = e.target.elements['name-input']
-    success(name)
+    ok(name)
   }
   return (
     <div>
       <form onSubmit={onSubmit}>
-        <h6 id="desc"> Please enter your name </h6>
+        <h6 id='desc'> Please enter your name </h6>
         <input name='name-input' type='text' />
         <br />
         <button type='submit'> Confirm </button>

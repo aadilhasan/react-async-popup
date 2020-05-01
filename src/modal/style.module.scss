@@ -1,49 +1,25 @@
-.popupContainer {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 999;
-}
+@import '../styles/common-styles.modules.scss';
 
-.modalContainer {
-  border: 2px solid black;
-  padding: 15px;
-  background-color: gray;
-  color: white;
-  min-width: 300px;
+.container {
   min-height: 100px;
-  display: flex;
-  flex-direction: column;
-  animation: open 0.3s ease-out;
+  width: 500px;
 }
 
-.modalBody {
+.titleContainer {
+  padding: 15px;
+  border-bottom: 1px solid gray;
+}
+
+.titleContainer + .content {
+  margin-top: 10px;
+}
+
+.content {
+  padding: 10px 15px;
   flex: 1;
 }
 
 .footer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.action {
-  border: 1px solid red;
-  margin: 0 5px;
-  padding: 5px 10px;
-}
-
-@keyframes open {
-  0% {
-    transform: scale(0, 0);
-  }
-  100% {
-    transform: scale(1, 1);
-  }
+  padding: 15px;
+  border-top: 1px solid #d6d6d6;
 }
