@@ -1,5 +1,3 @@
-import { ComponentType } from "./enums";
-
 export interface RenderFun {
   (): JSX.Element;
 }
@@ -51,7 +49,6 @@ export interface BaseConfig {
 export interface BaseProps extends BaseConfig {
   destroyOnClose?: boolean,
   container?: HTMLElement;
-  type?: ComponentType;
 }
 
 

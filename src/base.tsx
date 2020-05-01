@@ -1,6 +1,6 @@
 import React from "react";
 import { NewFun, OpenFun, PromiseCallbackFn, RenderFun, BaseProps, OpenConfig } from "./types";
-import { trapFocus } from "./utils";
+import { trapFocus, unmountReactComponent } from "./utils";
 import { CONTENT_ID, HEADER_ID } from "./const";
 import { ComponentType } from "./enums";
 
@@ -60,7 +60,7 @@ export default class BasePopC extends React.Component<
     const { visible } = this.state;
     const { labelledby = HEADER_ID, describedby = CONTENT_ID } = aria || {};
     const styles = this.styles
-    const role = this.props.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
+    const role = this.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
 
     if (!visible) return null;
 
@@ -87,7 +87,7 @@ export default class BasePopC extends React.Component<
   }
 
   get allProps() {
-    const componentDefaults = this.props.type === ComponentType.Confirm ? CONFIRM_DEFAULTS_PROPS : MODAL_DEFAULTS_PROPS;
+    const componentDefaults = this.type === ComponentType.Confirm ? CONFIRM_DEFAULTS_PROPS : MODAL_DEFAULTS_PROPS;
     return { ...DEFAULTS, ...componentDefaults, ...this.props, ...(this.dynamicConfig || {}) };
   }
 
@@ -114,8 +114,8 @@ export default class BasePopC extends React.Component<
   }
 
   renderCloseButton(styles: any) {
-    const { type, closable } = this.allProps;
-    const isModal = type === ComponentType.Modal;
+    const { closable } = this.allProps;
+    const isModal = this.type === ComponentType.Modal;
     if (!isModal || closable === false) {
       return null
     }
@@ -160,6 +160,11 @@ export default class BasePopC extends React.Component<
   get styles() {
     return {} as any
   }
+
+  get type() {
+    return ComponentType.Confirm
+  }
+
 
   handleEscape = (event: KeyboardEvent) => {
     const key = event.which || event.keyCode;
@@ -209,6 +214,9 @@ export default class BasePopC extends React.Component<
     this.enableBodyScroll();
     this.removeFocusListener && this.removeFocusListener();
     this.removeFocusListener = null;
+    if (this.props.destroyOnClose != false) {
+      this.destroy();
+    }
   };
 
   handleMaskClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -259,6 +267,12 @@ export default class BasePopC extends React.Component<
   enableBodyScroll() {
     let { body } = window.document;
     body.style.overflow = "";
+  }
+
+  destroy() {
+    const el = this.myRef.current as HTMLElement;
+    let parent = el ? el.parentElement : null;
+    return unmountReactComponent(parent);
   }
 }
 
