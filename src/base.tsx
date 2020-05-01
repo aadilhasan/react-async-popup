@@ -1,6 +1,6 @@
 import React from "react";
 import { NewFun, OpenFun, PromiseCallbackFn, RenderFun, BaseProps, OpenConfig } from "./types";
-import { trapFocus } from "./utils";
+import { trapFocus, unmountReactComponent } from "./utils";
 import { CONTENT_ID, HEADER_ID } from "./const";
 import { ComponentType } from "./enums";
 import Animate from "./utils/animate";
@@ -51,7 +51,7 @@ export default class Popup extends React.Component<
 
   static new: NewFun;
 
-  static render: RenderFun
+  static render: RenderFun;
 
   componentDidMount() {
     document.addEventListener('keyup', this.handleEscape);
@@ -66,7 +66,7 @@ export default class Popup extends React.Component<
     const { visible } = this.state;
     const { labelledby = HEADER_ID, describedby = CONTENT_ID } = aria || {};
     const styles = this.styles
-    const role = this.props.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
+    const role = this.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
     const defaultAnimationClasses = {
       beforeEnter: styles.beforeEnter,
       enter: styles.enter,
@@ -77,36 +77,52 @@ export default class Popup extends React.Component<
     const animationClasses = transitionAnimationClasses ? transitionAnimationClasses : defaultAnimationClasses;
 
     return (
-      <Animate
-        show={visible}
-        classNames={animationClasses}
-        timeout={100}
-        onEnter={this.onVisible}
-        onExit={this.handleModalExit}>
-        <div
-          className={`${styles.popupContainer}${wrapClassName ? wrapClassName : ''}`}
-          onClick={this.handleMaskClick}
-          //@ts-ignore
-          ref={this.myRef}>
-          <div
-            role={role}
-            aria-modal="true"
-            aria-labelledby={labelledby}
-            aria-describedby={describedby}
-            className={styles.container}
-            style={popupStyle || {}} >
-            {this.renderCloseButton(styles)}
-            {this.renderHeader(styles)}
-            {this.renderContent(styles)}
-            {this.renderFooter(styles)}
-          </div>
+      <div
+        aria-hidden={!visible}
+        className={`${styles.popupContainer}${wrapClassName ? wrapClassName : ''}`}
+        onClick={this.handleMaskClick}
+        //@ts-ignore
+        ref={this.myRef}>
+        <Animate
+          show={visible}
+          classNames={{
+            beforeEnter: styles.mBeforeEnter,
+            enter: styles.mEnter,
+            active: styles.mActive,
+            exit: styles.mExit
+          }}
+          onEnter={() => console.log(" mask entered ")}
+          onExit={() => console.log(" mask exited ")}
+          timeout={100}>
+          <div className={styles.mask}></div>
+        </Animate>
+        <div className={styles.popupWrap}>
+          <Animate
+            show={visible}
+            classNames={animationClasses}
+            timeout={100}
+            onEnter={this.onVisible}
+            onExit={this.handleModalExit}>
+            <div
+              role={role}
+              aria-modal="true"
+              aria-labelledby={labelledby}
+              aria-describedby={describedby}
+              className={styles.container}
+              style={popupStyle || {}} >
+              {this.renderCloseButton(styles)}
+              {this.renderHeader(styles)}
+              {this.renderContent(styles)}
+              {this.renderFooter(styles)}
+            </div>
+          </Animate>
         </div>
-      </Animate>
+      </div>
     );
   }
 
   get allProps() {
-    const componentDefaults = this.props.type === ComponentType.Confirm ? CONFIRM_DEFAULTS_PROPS : MODAL_DEFAULTS_PROPS;
+    const componentDefaults = this.type === ComponentType.Confirm ? CONFIRM_DEFAULTS_PROPS : MODAL_DEFAULTS_PROPS;
     return { ...DEFAULTS, ...componentDefaults, ...this.props, ...(this.dynamicConfig || {}) };
   }
 
@@ -133,8 +149,8 @@ export default class Popup extends React.Component<
   }
 
   renderCloseButton(styles: any) {
-    const { type, closable } = this.allProps;
-    const isModal = type === ComponentType.Modal;
+    const { closable } = this.allProps;
+    const isModal = this.type === ComponentType.Modal;
     if (!isModal || closable === false) {
       return null
     }
@@ -178,6 +194,10 @@ export default class Popup extends React.Component<
 
   get styles() {
     return {} as any
+  }
+
+  get type() {
+    return ComponentType.Confirm
   }
 
   handleEscape = (event: KeyboardEvent) => {
@@ -230,6 +250,9 @@ export default class Popup extends React.Component<
     this.enableBodyScroll();
     this.removeFocusListener && this.removeFocusListener();
     this.removeFocusListener = null;
+    if (this.props.destroyOnClose != false) {
+      this.destroy();
+    }
   };
 
   handleMaskClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -294,6 +317,12 @@ export default class Popup extends React.Component<
     let { body } = window.document;
     body.style.overflow = "";
   }
+
+  destroy() {
+    let parent = (this.myRef.current as HTMLElement).parentElement;
+    return unmountReactComponent(parent);
+  }
+
 }
 
 interface CloseIcon {

@@ -54,12 +54,17 @@ export const getContainer = (container?: HTMLElement) => {
     return div;
 }
 
-export const unmountReactComponent = (div: HTMLElement): Promise<void> => {
+export const unmountReactComponent = (node: HTMLElement | null): Promise<void> => {
+    
+    if (!node) return Promise.resolve();
+
     return new Promise(resolve => {
-        ReactDOM.unmountComponentAtNode(div);
-        if (div.parentNode) {
-            div.parentNode.removeChild(div);
+        ReactDOM.unmountComponentAtNode(node);
+        if (node.parentNode) {
+            node.parentNode.removeChild(node);
         }
         resolve();
     });
 }
+
+export const noop = () => { };

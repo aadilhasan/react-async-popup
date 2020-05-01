@@ -15,31 +15,21 @@ code {
 
 .before {
   opacity: 0;
-}
-.before > div {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-.enter {
-  opacity: 1;
-  transition: opacity 300ms;
-}
-.enter > div {
-  opacity: 1;
-  transform: translateY(100px);
-  transition: transform 250ms;
+  transform: translateY(-100px);
 }
 
-.active > div {
-  transform: translateY(100px);
+.enter {
+  opacity: 1;
+  transform: translateY(0px);
+  transition: transform 100ms;
+}
+
+.active {
+  transform: translateY(0px);
 }
 
 .exit {
-  opacity: 0;
-  transition: opacity 250ms;
-}
-
-.exit > div {
-  transform: translateY(-10px);
-  transition: transform 250ms;
+  opacity: 0.6;
+  transform: translateY(-100px);
+  transition: transform 100ms;
 }

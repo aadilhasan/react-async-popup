@@ -5,7 +5,9 @@ import 'react-async-popup/dist/index.css'
 
 let showAlert
 let showModal
-Confirm.new().then(({ show }) => {
+Confirm.new({
+  destroyOnClose: false
+}).then(({ show }) => {
   showAlert = show
 })
 
@@ -22,7 +24,7 @@ function alertFooter({ cancel, ok }) {
   )
 }
 
-Modal.new().then(({ show }) => {
+Modal.new({ destroyOnClose: false }).then(({ show }) => {
   showModal = show
 })
 
@@ -63,7 +65,7 @@ export default function App() {
   }
 
   const openModalWithContainer = async () => {
-    const { show } = await Modal.new({
+    const { show, destroy } = await Modal.new({
       container: refContainer.current
     })
     const name = await show({
@@ -72,6 +74,7 @@ export default function App() {
       footer: null,
       closeOnEscape: false
     })
+    destroy()
     console.log(' use entered name is ', name)
   }
 
