@@ -11,6 +11,7 @@ export const trapFocus = (element: any) => {
     const firstFocusableEl: any = focusableEls[0];
     const lastFocusableEl: any = focusableEls[focusableEls.length - 1];
 
+
     const handleFocusChange = (e: KeyboardEvent) => {
 
         var isTabPressed = (e.key === 'Tab' || e.keyCode === KEYCODE_TAB);
@@ -18,8 +19,14 @@ export const trapFocus = (element: any) => {
         if (!isTabPressed) {
             return;
         }
+        // if focus element is not inside the trap element focus to first focusable element
+        if (!element.contains(document.activeElement)) {
+            firstFocusableEl.focus();
+            e.preventDefault();
+            return;
+        }
 
-        if (e.shiftKey) /* shift + tab */ {
+        if (e.shiftKey) {
             if (document.activeElement === firstFocusableEl) {
                 lastFocusableEl.focus();
                 e.preventDefault();
@@ -33,11 +40,13 @@ export const trapFocus = (element: any) => {
 
     }
 
-    element.addEventListener('keydown', handleFocusChange);
+    document.body.addEventListener('keydown', handleFocusChange);
     // focus first focusable element
-    firstFocusableEl.focus();
+    requestAnimationFrame(() => {
+        firstFocusableEl.focus();
+    })
     return () => {
-        element.removeEventListener('keydown', handleFocusChange);
+        document.body.removeEventListener('keydown', handleFocusChange);
         // return focus back 
         //@ts-ignore
         focusedBeforModalOpen && focusedBeforModalOpen.focus()
@@ -54,11 +63,14 @@ export const getContainer = (container?: HTMLElement) => {
     return div;
 }
 
-export const unmountReactComponent = (div: HTMLElement): Promise<void> => {
+export const unmountReactComponent = (node: HTMLElement | null): Promise<void> => {
+
+    if (!node) return Promise.resolve();
+
     return new Promise(resolve => {
-        ReactDOM.unmountComponentAtNode(div);
-        if (div.parentNode) {
-            div.parentNode.removeChild(div);
+        ReactDOM.unmountComponentAtNode(node);
+        if (node.parentNode) {
+            node.parentNode.removeChild(node);
         }
         resolve();
     });

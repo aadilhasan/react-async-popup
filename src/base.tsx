@@ -1,8 +1,9 @@
 import React from "react";
 import { NewFun, OpenFun, PromiseCallbackFn, RenderFun, BaseProps, OpenConfig } from "./types";
-import { trapFocus } from "./utils";
+import { trapFocus, unmountReactComponent } from "./utils";
 import { CONTENT_ID, HEADER_ID } from "./const";
 import { ComponentType } from "./enums";
+import { Animate } from "./utils/animate";
 
 const asyncWrap = (promise: Promise<any>): Promise<any> =>
   promise.then(res => res || true).catch(error => error || false);
@@ -25,8 +26,12 @@ export interface State {
   visible: boolean;
 }
 
-export default class BasePopC extends React.Component<
-  BaseProps,
+interface DialogProps extends BaseProps {
+  parentNode: HTMLElement
+}
+
+export default class Dialog extends React.Component<
+  DialogProps,
   State
   > {
   promise: null | Promise<any> = null;
@@ -34,10 +39,12 @@ export default class BasePopC extends React.Component<
   resolve: PromiseCallbackFn | null = null;
 
   dynamicConfig: OpenConfig | null = null;
-
-  myRef = React.createRef();
-
   removeFocusListener: Function | null;
+
+  promiseState = {
+    rejected: false,
+    result: null
+  }
 
   state = {
     visible: false
@@ -60,34 +67,42 @@ export default class BasePopC extends React.Component<
     const { visible } = this.state;
     const { labelledby = HEADER_ID, describedby = CONTENT_ID } = aria || {};
     const styles = this.styles
-    const role = this.props.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
-
-    if (!visible) return null;
+    const role = this.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
 
     return (
-      <div
-        className={`${styles.popupContainer}${wrapClassName ? wrapClassName : ''}`}
-        onClick={this.handleMaskClick}
-        //@ts-ignore
-        ref={this.myRef}>
-        <div
-          role={role}
-          aria-modal="true"
-          aria-labelledby={labelledby}
-          aria-describedby={describedby}
-          className={styles.container}
-          style={popupStyle || {}} >
-          {this.renderCloseButton(styles)}
-          {this.renderHeader(styles)}
-          {this.renderContent(styles)}
-          {this.renderFooter(styles)}
-        </div>
-      </div>
-    );
+      <Animate
+        show={visible}
+        transitionDuration={300}
+        unmountOnHide={true}
+        visibleClassName={styles.show}
+        afterVisible={this.handleModalVisible}
+        afterHide={this.handleModalExit}
+      >
+        {() => {
+          return (<>
+            <div
+              className={`${styles.popup}${wrapClassName ? " " + wrapClassName : ''}`}>
+              <div role={role}
+                aria-modal="true"
+                aria-labelledby={labelledby}
+                aria-describedby={describedby}
+                style={popupStyle || {}}
+                className={styles.popupContent}>
+                {this.renderCloseButton(styles)}
+                {this.renderHeader(styles)}
+                {this.renderContent(styles)}
+                {this.renderFooter(styles)}
+              </div>
+            </div>
+            <div className={styles.mask} onClick={this.handleMaskClick} />
+          </>)
+        }}
+      </Animate>
+    )
   }
 
   get allProps() {
-    const componentDefaults = this.props.type === ComponentType.Confirm ? CONFIRM_DEFAULTS_PROPS : MODAL_DEFAULTS_PROPS;
+    const componentDefaults = this.type === ComponentType.Confirm ? CONFIRM_DEFAULTS_PROPS : MODAL_DEFAULTS_PROPS;
     return { ...DEFAULTS, ...componentDefaults, ...this.props, ...(this.dynamicConfig || {}) };
   }
 
@@ -114,8 +129,8 @@ export default class BasePopC extends React.Component<
   }
 
   renderCloseButton(styles: any) {
-    const { type, closable } = this.allProps;
-    const isModal = type === ComponentType.Modal;
+    const { closable } = this.allProps;
+    const isModal = this.type === ComponentType.Modal;
     if (!isModal || closable === false) {
       return null
     }
@@ -131,7 +146,7 @@ export default class BasePopC extends React.Component<
     const { content } = this.allProps;
     if (content === null) return null;
     let contentToRender = this.getRenderableWithProps(content);
-    return contentToRender ? <div id={CONTENT_ID} className={styles.content}>{contentToRender}</div> : null;
+    return contentToRender ? <div id={CONTENT_ID} className={styles.body}>{contentToRender}</div> : null;
   }
 
   renderFooter(styles: any) {
@@ -160,6 +175,11 @@ export default class BasePopC extends React.Component<
   get styles() {
     return {} as any
   }
+
+  get type() {
+    return ComponentType.Confirm
+  }
+
 
   handleEscape = (event: KeyboardEvent) => {
     const key = event.which || event.keyCode;
@@ -194,12 +214,25 @@ export default class BasePopC extends React.Component<
     if (dynamicProps) {
       this.dynamicConfig = dynamicProps;
     }
-    this.setState({ visible: true }, () => {
-      this.disableBodyScroll();
-      this.removeFocusListener = trapFocus(this.myRef.current)
-    });
+    this.setState({ visible: true }, this.disableBodyScroll);
     return asyncWrap(this.promise);
   };
+
+  handleModalVisible = (el: HTMLElement) => {
+    setTimeout(() => {
+      this.removeFocusListener = trapFocus(el)
+    })
+  }
+
+  handleModalExit = () => {
+    const { rejected, result } = this.promiseState;
+    if (rejected == true) {
+      this.reject && this.reject(result);
+    } else {
+      this.resolve && this.resolve(result);
+    }
+    this.afterAction();
+  }
 
   afterAction = () => {
     this.dynamicConfig = null;
@@ -209,12 +242,19 @@ export default class BasePopC extends React.Component<
     this.enableBodyScroll();
     this.removeFocusListener && this.removeFocusListener();
     this.removeFocusListener = null;
+    this.promiseState = {
+      rejected: false,
+      result: null
+    }
+    if (this.props.destroyOnClose != false) {
+      this.destroy();
+    }
   };
 
-  handleMaskClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  handleMaskClick = () => {
     const { maskClosable, closable } = this.allProps;
     if (closable === false) return
-    if (maskClosable !== false && this.myRef.current === e.target) {
+    if (maskClosable !== false) {
       this.onCancel();
     }
   }
@@ -223,12 +263,12 @@ export default class BasePopC extends React.Component<
     this.setState(
       {
         visible: false
-      },
-      () => {
-        this.resolve && this.resolve(value);
-        this.afterAction();
       }
     );
+    this.promiseState = {
+      rejected: false,
+      result: value
+    }
   };
 
   onCancel = (value: any = false) => {
@@ -236,11 +276,11 @@ export default class BasePopC extends React.Component<
       {
         visible: false
       },
-      () => {
-        this.reject && this.reject(value);
-        this.afterAction();
-      }
     );
+    this.promiseState = {
+      rejected: true,
+      result: value
+    }
   };
 
   handleOK = () => {
@@ -260,6 +300,12 @@ export default class BasePopC extends React.Component<
     let { body } = window.document;
     body.style.overflow = "";
   }
+
+  destroy() {
+    const { parentNode } = this.props;
+    let parent = parentNode ? parentNode : null;
+    return unmountReactComponent(parent);
+  }
 }
 
 interface CloseIcon {
@@ -269,7 +315,7 @@ interface CloseIcon {
 
 const CloseIcon = ({ onClick, className }: CloseIcon) => {
   return (
-    <button aria-label="close" onClick={onClick} className={className} >
+    <button autoFocus aria-label="close" onClick={onClick} className={className} >
       <svg fill="currentColor" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
     </button>
   );

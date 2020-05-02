@@ -10,7 +10,7 @@
     // === ts-react config ends here ===
     "lib": ["dom", "esnext"],
     "moduleResolution": "node",
-    "declaration": true,
+    // "declaration": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "strictNullChecks": true,

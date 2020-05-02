@@ -5,7 +5,9 @@ import 'react-async-popup/dist/index.css'
 
 let showAlert
 let showModal
-Confirm.new().then(({ show }) => {
+Confirm.new({
+  destroyOnClose: false
+}).then(({ show }) => {
   showAlert = show
 })
 
@@ -22,7 +24,9 @@ function alertFooter({ cancel, ok }) {
   )
 }
 
-Modal.new().then(({ show }) => {
+Modal.new({
+  destroyOnClose: false
+}).then(({ show }) => {
   showModal = show
 })
 
@@ -56,7 +60,8 @@ export default function App() {
   const openModal = async () => {
     const name = await showModal({
       title: 'Hi this is fully accessible modal',
-      content: 'Modal Body'
+      content: 'Modal Body',
+      wrapClassName: 'modal-container'
       // footer: null
     })
     console.log(' use entered name is ', name)

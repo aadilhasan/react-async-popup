@@ -1,13 +1,13 @@
 @import '../styles/common-styles.modules.scss';
 
-.container {
-  padding: 20px;
+.popupContent {
+  padding: 15px;
 }
 
 .titleContainer {
   margin-bottom: 10px;
 }
 
-.titleContainer + .content {
+.titleContainer + .body {
   margin-top: 10px;
 }

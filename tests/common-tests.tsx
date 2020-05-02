@@ -2,7 +2,7 @@ import React from 'react';
 import { unmountComponentAtNode } from "react-dom";
 import { HEADER_ID, CONTENT_ID } from "../src/const"
 
-export default function (Component: any, name: string, moreTests?:Function) {
+export default function (Component: any, name: string, moreTests?: Function) {
     let container = null;
     let promise = null;
     beforeEach(() => {
@@ -77,24 +77,68 @@ export default function (Component: any, name: string, moreTests?:Function) {
         it(" should close on cancel ", async () => {
             const { show } = await Component.new({ container });
             setTimeout(() => {
-                let button = container.querySelector("button");
-                button.click();
-            }, 100);
-            const e = await show({});
-            expect(Boolean(e)).toBe(true);
+                let buttons = container.querySelectorAll("button");
+                buttons[0].click();
+            }, 500);
+            const result = await show();
+            expect(result).toBe(false);
         });
 
         it(" should close on ok ", async () => {
             const { show } = await Component.new({ container });
             setTimeout(() => {
                 let buttons = container.querySelectorAll("button");
-                buttons[1].click();
+                // click on ok button
+                buttons[buttons.length - 1].click();
             }, 100);
-            const e = await show({});
-            expect(Boolean(e)).toBe(true);
+            const result = await show({});
+            expect(result).toBe(true);
+        });
+
+        it(" should auto destory on close if destroyOnClose is not false ", async () => {
+            const { show } = await Component.new({ container });
+            setTimeout(() => {
+                let buttons = container.querySelectorAll("button");
+                // click on ok button
+                buttons[buttons.length - 1].click();
+            }, 100);
+            const result = await show({});
+            expect(result).toBe(true);
+            const result2 = await show({});
+            expect(result2).toBe(null);
+        });
+
+        it(" should not auto destory if destroyOnClose is false ", async () => {
+            const { show } = await Component.new({ container, destroyOnClose: false });
+            setTimeout(() => {
+                let buttons = container.querySelectorAll("button");
+                // click on ok button
+                buttons[buttons.length - 1].click();
+            }, 100);
+            const result = await show({});
+            expect(result).toBe(true);
+            setTimeout(() => {
+                let buttons = container.querySelectorAll("button");
+                // click on ok button
+                buttons[buttons.length - 1].click();
+            }, 100);
+            const result2 = await show({});
+            expect(result2).toBe(true);
+        });
+
+        it(" should resolve promise with provided value ", async () => {
+            const promiseResult = "CLOSED"
+            const { show } = await Component.new({ container });
+            setTimeout(() => {
+                let button = container.querySelector("#custom-close-btn");
+                button.click();
+            }, 100);
+            const result = await show({
+                content: ({ cancel }) => <button id="custom-close-btn" onClick={() => cancel(promiseResult)}></button>
+            });
+            expect(result).toBe(promiseResult);
         });
 
         moreTests && moreTests();
-
     })
 }

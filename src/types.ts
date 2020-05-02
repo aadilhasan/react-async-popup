@@ -1,5 +1,3 @@
-import { ComponentType } from "./enums";
-
 export interface RenderFun {
   (): JSX.Element;
 }
@@ -21,13 +19,13 @@ export interface DestroyCallbackFun {
   (): Promise<void>;
 }
 
-export interface NewConfirmReturnType {
+export interface NewReturnType {
   show: OpenFun;
   destroy: DestroyCallbackFun;
 }
 
 export interface NewFun {
-  (config?: BaseConfig): Promise<NewConfirmReturnType>;
+  (config?: BaseConfig): Promise<NewReturnType>;
 }
 
 export interface PromiseCallbackFn {
@@ -51,7 +49,6 @@ export interface BaseConfig {
 export interface BaseProps extends BaseConfig {
   destroyOnClose?: boolean,
   container?: HTMLElement;
-  type?: ComponentType;
 }
 
 
