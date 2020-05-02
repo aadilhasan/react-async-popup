@@ -1,0 +1,13 @@
+.confirm {
+  .popup-content {
+    padding: 15px;
+  }
+
+  .title-container {
+    margin-bottom: 10px;
+  }
+
+  .title-container + .body {
+    margin-top: 10px;
+  }
+}

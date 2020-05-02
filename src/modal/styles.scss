@@ -1,0 +1,25 @@
+.modal {
+  .popup-content {
+    min-height: 100px;
+    min-width: 500px;
+  }
+
+  .title-container {
+    padding: 15px;
+    border-bottom: 1px solid gray;
+  }
+
+  .title-container + .body {
+    margin-top: 10px;
+  }
+
+  .body {
+    flex: 1;
+    padding: 10px 15px;
+  }
+
+  .footer {
+    padding: 15px;
+    border-top: 1px solid #d6d6d6;
+  }
+}

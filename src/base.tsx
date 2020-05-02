@@ -4,6 +4,7 @@ import { trapFocus, unmountReactComponent } from "./utils";
 import { CONTENT_ID, HEADER_ID } from "./const";
 import { ComponentType } from "./enums";
 import { Animate } from "./utils/animate";
+import "./base-styles.scss";
 
 const asyncWrap = (promise: Promise<any>): Promise<any> =>
   promise.then(res => res || true).catch(error => error || false);
@@ -66,35 +67,35 @@ export default class Dialog extends React.Component<
     const { popupStyle, wrapClassName, aria } = this.allProps;
     const { visible } = this.state;
     const { labelledby = HEADER_ID, describedby = CONTENT_ID } = aria || {};
-    const styles = this.styles
     const role = this.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
+    let className = this.type === ComponentType.Confirm ? 'confirm' : 'modal'
 
     return (
       <Animate
         show={visible}
         transitionDuration={300}
         unmountOnHide={true}
-        visibleClassName={styles.show}
+        visibleClassName="show"
         afterVisible={this.handleModalVisible}
         afterHide={this.handleModalExit}
       >
         {() => {
           return (<>
             <div
-              className={`${styles.popup}${wrapClassName ? " " + wrapClassName : ''}`}>
+              className={`react-async-popup ${className}${wrapClassName ? " " + wrapClassName : ''}`}>
               <div role={role}
                 aria-modal="true"
                 aria-labelledby={labelledby}
                 aria-describedby={describedby}
                 style={popupStyle || {}}
-                className={styles.popupContent}>
-                {this.renderCloseButton(styles)}
-                {this.renderHeader(styles)}
-                {this.renderContent(styles)}
-                {this.renderFooter(styles)}
+                className="popup-content">
+                {this.renderCloseButton()}
+                {this.renderHeader()}
+                {this.renderContent()}
+                {this.renderFooter()}
               </div>
             </div>
-            <div className={styles.mask} onClick={this.handleMaskClick} />
+            <div className="mask" onClick={this.handleMaskClick} />
           </>)
         }}
       </Animate>
@@ -106,7 +107,7 @@ export default class Dialog extends React.Component<
     return { ...DEFAULTS, ...componentDefaults, ...this.props, ...(this.dynamicConfig || {}) };
   }
 
-  renderHeader(styles: any) {
+  renderHeader() {
     const { title } = this.allProps;
     if (!title) {
       return null
@@ -115,41 +116,41 @@ export default class Dialog extends React.Component<
     // some screen reader read text from text container elments only so use it
     if (typeof title !== 'object' || typeof title !== 'function') {
       return (
-        <div className={styles.titleContainer}>
-          <h3 className={styles.title} id={HEADER_ID}>{title}</h3>
+        <div className="title-container">
+          <h3 className="title" id={HEADER_ID}>{title}</h3>
         </div>
       )
     }
 
     return (
-      <div className={styles.titleContainer} id={HEADER_ID}>
+      <div className="title-container" id={HEADER_ID}>
         {title}
       </div>
     )
   }
 
-  renderCloseButton(styles: any) {
+  renderCloseButton() {
     const { closable } = this.allProps;
     const isModal = this.type === ComponentType.Modal;
     if (!isModal || closable === false) {
       return null
     }
     return (
-      <div className={styles.closeButtonContainer}>
-        <CloseIcon className={styles.closeButton} onClick={this.handleCancel} />
+      <div className="close-button-wrap">
+        <CloseIcon className="close-button" onClick={this.handleCancel} />
       </div>
     );
   }
 
 
-  renderContent(styles: any) {
+  renderContent() {
     const { content } = this.allProps;
     if (content === null) return null;
     let contentToRender = this.getRenderableWithProps(content);
-    return contentToRender ? <div id={CONTENT_ID} className={styles.body}>{contentToRender}</div> : null;
+    return contentToRender ? <div id={CONTENT_ID} className="body">{contentToRender}</div> : null;
   }
 
-  renderFooter(styles: any) {
+  renderFooter() {
     const { footer, okText, cancelText, closable } = this.allProps;
 
     if (footer === null) return null;
@@ -157,23 +158,19 @@ export default class Dialog extends React.Component<
     let contentToRender = this.getRenderableWithProps(footer);
 
     if (contentToRender !== undefined) {
-      return <div className={styles.footer}>{contentToRender}</div>;
+      return <div className="footer">{contentToRender}</div>;
     }
 
     return (
-      <div className={styles.footer}>
-        {closable !== false && <button className={styles.action} onClick={this.handleCancel}>
+      <div className="footer">
+        {closable !== false && <button className="action" onClick={this.handleCancel}>
           {cancelText || 'Cancel'}
         </button>}
-        <button className={styles.action} onClick={this.handleOK}>
+        <button className="action" onClick={this.handleOK}>
           {okText || 'Ok'}
         </button>
       </div>
     );
-  }
-
-  get styles() {
-    return {} as any
   }
 
   get type() {

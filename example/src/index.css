@@ -13,10 +13,10 @@ code {
     monospace;
 }
 
-.modal-container > div {
+.modal-container > div.popup-content {
   border-color: blue;
 }
 
-.modal-container button {
-  border-color: green;
+.modal-container .footer button {
+  border-color: red;
 }
