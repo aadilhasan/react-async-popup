@@ -1,6 +1,6 @@
 @import '../styles/common-styles.modules.scss';
 
-.container {
+.popupContent {
   padding: 20px;
 }
 
@@ -8,6 +8,6 @@
   margin-bottom: 10px;
 }
 
-.titleContainer + .content {
+.titleContainer + .body {
   margin-top: 10px;
 }

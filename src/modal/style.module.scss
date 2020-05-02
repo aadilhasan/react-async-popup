@@ -1,8 +1,8 @@
 @import '../styles/common-styles.modules.scss';
 
-.container {
+.popupContent {
   min-height: 100px;
-  width: 500px;
+  min-width: 500px;
 }
 
 .titleContainer {
@@ -10,13 +10,13 @@
   border-bottom: 1px solid gray;
 }
 
-.titleContainer + .content {
+.titleContainer + .body {
   margin-top: 10px;
 }
 
-.content {
-  padding: 10px 15px;
+.body {
   flex: 1;
+  padding: 10px 15px;
 }
 
 .footer {

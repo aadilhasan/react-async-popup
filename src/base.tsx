@@ -4,7 +4,6 @@ import { trapFocus, unmountReactComponent } from "./utils";
 import { CONTENT_ID, HEADER_ID } from "./const";
 import { ComponentType } from "./enums";
 import { Animate } from "./utils/animate";
-import "./styles/styles.css"
 
 const asyncWrap = (promise: Promise<any>): Promise<any> =>
   promise.then(res => res || true).catch(error => error || false);
@@ -27,7 +26,7 @@ export interface State {
   visible: boolean;
 }
 
-export default class BasePopC extends React.Component<
+export default class Dialog extends React.Component<
   BaseProps,
   State
   > {
@@ -73,16 +72,21 @@ export default class BasePopC extends React.Component<
       <Animate
         show={visible}
         transitionDuration={300}
-        visibleClassName={"md-show"}
+        visibleClassName={styles.show}
         afterVisible={this.handleModalVisible}
         afterHide={this.handleModalExit}
       >
         {() => {
           return (<>
             <div
-              className="md-modal">
-              <div className="md-content">
-                <div className="content">
+              className={`${styles.popup}${wrapClassName ? " " + wrapClassName : ''}`}>
+              <div role={role}
+                aria-modal="true"
+                aria-labelledby={labelledby}
+                aria-describedby={describedby}
+                style={popupStyle || {}}
+                className={styles.popupContent}>
+                <div className={styles.content}>
                   {this.renderCloseButton(styles)}
                   {this.renderHeader(styles)}
                   {this.renderContent(styles)}
@@ -90,32 +94,11 @@ export default class BasePopC extends React.Component<
                 </div>
               </div>
             </div>
-            <div className="mask" />
+            <div className={styles.mask} />
           </>)
         }}
       </Animate>
     )
-
-    return (
-      <div
-        className={`${styles.popupContainer}${wrapClassName ? wrapClassName : ''}`}
-        onClick={this.handleMaskClick}
-        //@ts-ignore
-        ref={this.myRef}>
-        <div
-          role={role}
-          aria-modal="true"
-          aria-labelledby={labelledby}
-          aria-describedby={describedby}
-          className={styles.container}
-          style={popupStyle || {}} >
-          {this.renderCloseButton(styles)}
-          {this.renderHeader(styles)}
-          {this.renderContent(styles)}
-          {this.renderFooter(styles)}
-        </div>
-      </div>
-    );
   }
 
   get allProps() {
@@ -163,7 +146,7 @@ export default class BasePopC extends React.Component<
     const { content } = this.allProps;
     if (content === null) return null;
     let contentToRender = this.getRenderableWithProps(content);
-    return contentToRender ? <div id={CONTENT_ID} className={styles.content}>{contentToRender}</div> : null;
+    return contentToRender ? <div id={CONTENT_ID} className={styles.body}>{contentToRender}</div> : null;
   }
 
   renderFooter(styles: any) {
