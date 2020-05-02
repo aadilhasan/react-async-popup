@@ -26,8 +26,12 @@ export interface State {
   visible: boolean;
 }
 
+interface DialogProps extends BaseProps {
+  parentNode: HTMLElement
+}
+
 export default class Dialog extends React.Component<
-  BaseProps,
+  DialogProps,
   State
   > {
   promise: null | Promise<any> = null;
@@ -35,9 +39,6 @@ export default class Dialog extends React.Component<
   resolve: PromiseCallbackFn | null = null;
 
   dynamicConfig: OpenConfig | null = null;
-
-  myRef: HTMLElement | null = null;
-
   removeFocusListener: Function | null;
 
   promiseState = {
@@ -72,6 +73,7 @@ export default class Dialog extends React.Component<
       <Animate
         show={visible}
         transitionDuration={300}
+        unmountOnHide={true}
         visibleClassName={styles.show}
         afterVisible={this.handleModalVisible}
         afterHide={this.handleModalExit}
@@ -94,7 +96,7 @@ export default class Dialog extends React.Component<
                 </div>
               </div>
             </div>
-            <div className={styles.mask} />
+            <div className={styles.mask} onClick={this.handleMaskClick} />
           </>)
         }}
       </Animate>
@@ -219,9 +221,8 @@ export default class Dialog extends React.Component<
   };
 
   handleModalVisible = (el: HTMLElement) => {
-    this.myRef = el;
     setTimeout(() => {
-      this.removeFocusListener = trapFocus(this.myRef)
+      this.removeFocusListener = trapFocus(el)
     })
   }
 
@@ -252,10 +253,10 @@ export default class Dialog extends React.Component<
     }
   };
 
-  handleMaskClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  handleMaskClick = () => {
     const { maskClosable, closable } = this.allProps;
     if (closable === false) return
-    if (maskClosable !== false && this.myRef === e.target) {
+    if (maskClosable !== false) {
       this.onCancel();
     }
   }
@@ -303,8 +304,8 @@ export default class Dialog extends React.Component<
   }
 
   destroy() {
-    const el = this.myRef as HTMLElement;
-    let parent = el ? el.parentElement : null;
+    const { parentNode } = this.props;
+    let parent = parentNode ? parentNode : null;
     return unmountReactComponent(parent);
   }
 }

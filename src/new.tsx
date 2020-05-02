@@ -30,7 +30,7 @@ export default function (Component: any): any {
                     destroy: destroy as DestroyCallbackFun
                 });
             };
-            ReactDOM.render(<Component {...rest} type={ComponentType.Confirm} ref={getRef} />, div);
+            ReactDOM.render(<Component {...rest} type={ComponentType.Confirm} parentNode={div} ref={getRef} />, div);
         });
     };
 }
