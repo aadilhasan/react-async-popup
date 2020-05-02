@@ -60,7 +60,8 @@ export default function App() {
   const openModal = async () => {
     const name = await showModal({
       title: 'Hi this is fully accessible modal',
-      content: 'Modal Body'
+      content: 'Modal Body',
+      wrapClassName: 'modal-container'
       // footer: null
     })
     console.log(' use entered name is ', name)

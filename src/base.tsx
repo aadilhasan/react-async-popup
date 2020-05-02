@@ -88,12 +88,10 @@ export default class Dialog extends React.Component<
                 aria-describedby={describedby}
                 style={popupStyle || {}}
                 className={styles.popupContent}>
-                <div className={styles.content}>
-                  {this.renderCloseButton(styles)}
-                  {this.renderHeader(styles)}
-                  {this.renderContent(styles)}
-                  {this.renderFooter(styles)}
-                </div>
+                {this.renderCloseButton(styles)}
+                {this.renderHeader(styles)}
+                {this.renderContent(styles)}
+                {this.renderFooter(styles)}
               </div>
             </div>
             <div className={styles.mask} onClick={this.handleMaskClick} />
