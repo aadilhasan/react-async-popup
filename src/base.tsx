@@ -3,6 +3,8 @@ import { NewFun, OpenFun, PromiseCallbackFn, RenderFun, BaseProps, OpenConfig } 
 import { trapFocus, unmountReactComponent } from "./utils";
 import { CONTENT_ID, HEADER_ID } from "./const";
 import { ComponentType } from "./enums";
+import { Animate } from "./utils/animate";
+import "./styles/styles.css"
 
 const asyncWrap = (promise: Promise<any>): Promise<any> =>
   promise.then(res => res || true).catch(error => error || false);
@@ -35,9 +37,14 @@ export default class BasePopC extends React.Component<
 
   dynamicConfig: OpenConfig | null = null;
 
-  myRef = React.createRef();
+  myRef: HTMLElement | null = null;
 
   removeFocusListener: Function | null;
+
+  promiseState = {
+    rejected: false,
+    result: null
+  }
 
   state = {
     visible: false
@@ -62,7 +69,32 @@ export default class BasePopC extends React.Component<
     const styles = this.styles
     const role = this.type === ComponentType.Confirm ? 'alertdialog' : 'dialog';
 
-    if (!visible) return null;
+    return (
+      <Animate
+        show={visible}
+        transitionDuration={300}
+        visibleClassName={"md-show"}
+        afterVisible={this.handleModalVisible}
+        afterHide={this.handleModalExit}
+      >
+        {() => {
+          return (<>
+            <div
+              className="md-modal">
+              <div className="md-content">
+                <div className="content">
+                  {this.renderCloseButton(styles)}
+                  {this.renderHeader(styles)}
+                  {this.renderContent(styles)}
+                  {this.renderFooter(styles)}
+                </div>
+              </div>
+            </div>
+            <div className="mask" />
+          </>)
+        }}
+      </Animate>
+    )
 
     return (
       <div
@@ -199,12 +231,26 @@ export default class BasePopC extends React.Component<
     if (dynamicProps) {
       this.dynamicConfig = dynamicProps;
     }
-    this.setState({ visible: true }, () => {
-      this.disableBodyScroll();
-      this.removeFocusListener = trapFocus(this.myRef.current)
-    });
+    this.setState({ visible: true }, this.disableBodyScroll);
     return asyncWrap(this.promise);
   };
+
+  handleModalVisible = (el: HTMLElement) => {
+    this.myRef = el;
+    setTimeout(() => {
+      this.removeFocusListener = trapFocus(this.myRef)
+    })
+  }
+
+  handleModalExit = () => {
+    const { rejected, result } = this.promiseState;
+    if (rejected == true) {
+      this.reject && this.reject(result);
+    } else {
+      this.resolve && this.resolve(result);
+    }
+    this.afterAction();
+  }
 
   afterAction = () => {
     this.dynamicConfig = null;
@@ -214,6 +260,10 @@ export default class BasePopC extends React.Component<
     this.enableBodyScroll();
     this.removeFocusListener && this.removeFocusListener();
     this.removeFocusListener = null;
+    this.promiseState = {
+      rejected: false,
+      result: null
+    }
     if (this.props.destroyOnClose != false) {
       this.destroy();
     }
@@ -222,7 +272,7 @@ export default class BasePopC extends React.Component<
   handleMaskClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const { maskClosable, closable } = this.allProps;
     if (closable === false) return
-    if (maskClosable !== false && this.myRef.current === e.target) {
+    if (maskClosable !== false && this.myRef === e.target) {
       this.onCancel();
     }
   }
@@ -231,12 +281,12 @@ export default class BasePopC extends React.Component<
     this.setState(
       {
         visible: false
-      },
-      () => {
-        this.resolve && this.resolve(value);
-        this.afterAction();
       }
     );
+    this.promiseState = {
+      rejected: false,
+      result: value
+    }
   };
 
   onCancel = (value: any = false) => {
@@ -244,11 +294,11 @@ export default class BasePopC extends React.Component<
       {
         visible: false
       },
-      () => {
-        this.reject && this.reject(value);
-        this.afterAction();
-      }
     );
+    this.promiseState = {
+      rejected: true,
+      result: value
+    }
   };
 
   handleOK = () => {
@@ -270,7 +320,7 @@ export default class BasePopC extends React.Component<
   }
 
   destroy() {
-    const el = this.myRef.current as HTMLElement;
+    const el = this.myRef as HTMLElement;
     let parent = el ? el.parentElement : null;
     return unmountReactComponent(parent);
   }
@@ -283,7 +333,7 @@ interface CloseIcon {
 
 const CloseIcon = ({ onClick, className }: CloseIcon) => {
   return (
-    <button aria-label="close" onClick={onClick} className={className} >
+    <button autoFocus aria-label="close" onClick={onClick} className={className} >
       <svg fill="currentColor" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
     </button>
   );

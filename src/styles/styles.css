@@ -1,0 +1,52 @@
+.md-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: auto;
+  z-index: 2000;
+  visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.md-hide {
+  /* visibility: hidden; */
+}
+
+.md-show {
+  visibility: visible;
+}
+
+.md-content {
+  background: #fff;
+  position: relative;
+  border-radius: 3px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: all 0.3s;
+}
+
+.md-show .md-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.mask {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  transition: all 0.3s;
+}
+
+.md-show ~ .mask {
+  opacity: 1;
+  visibility: visible;
+}
