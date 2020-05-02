@@ -1,13 +1,13 @@
   
 import React from 'react'
 import { getContainer } from './utils';
-import { BaseProps, NewConfirmReturnType, OpenFun, DestroyCallbackFun } from './types';
+import { BaseProps, NewReturnType, OpenFun, DestroyCallbackFun } from './types';
 import { Confirm } from '.';
 import ReactDOM from 'react-dom';
 import { ComponentType } from './enums';
 
 export default function (Component: any): any {
-    return (config?: BaseProps): Promise<NewConfirmReturnType> => {
+    return (config?: BaseProps): Promise<NewReturnType> => {
         const { container, ...rest } = config || {} as BaseProps;
         const div = getContainer(container);
         let _ref: Confirm | null;
