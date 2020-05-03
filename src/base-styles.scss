@@ -1,0 +1,92 @@
+.react-async-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: auto;
+  z-index: 2000;
+  visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateX(-50%) translateY(-50%);
+  width: auto;
+
+  &.show {
+    visibility: visible;
+    .popup-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+    & ~ .mask {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  & ~ .mask {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    opacity: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: all 0.3s;
+  }
+
+  .popup-content {
+    max-width: 100vw;
+    min-width: 350px;
+    border: 2px solid;
+    background: #fff;
+    position: relative;
+    border-radius: 1px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: scale(0.7);
+    transition: all 0.3s;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+  }
+
+  .title {
+    margin: 0;
+  }
+
+  .action {
+    border: 1px solid black;
+    margin: 0 5px;
+    padding: 5px 10px;
+    font-weight: bold;
+    min-width: 55px;
+  }
+
+  .close-button-wrap {
+    position: relative;
+  }
+
+  .close-button {
+    height: 20px;
+    width: 20px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    position: absolute;
+    right: 15px;
+    top: 14px;
+  }
+
+  @keyframes open {
+    0% {
+      transform: scale(0, 0);
+    }
+    100% {
+      transform: scale(1, 1);
+    }
+  }
+}

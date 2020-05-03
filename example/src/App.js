@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { Confirm, Modal } from 'react-async-popup'
-import 'react-async-popup/dist/index.css'
 
 let showAlert
 let showModal
