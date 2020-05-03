@@ -1,8 +1,6 @@
 # react-async-popup
 
-> A React Popup which returns Promise, so it can be used with async await.
-
-[![NPM](https://img.shields.io/npm/v/react-async-popup.svg)](https://www.npmjs.com/package/react-async-popup) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+> A promise based React Popup.
 
 ## Install
 
@@ -10,18 +8,37 @@
 npm install --save react-async-popup
 ```
 
+or
+
+```bash
+yarn add react-async-popup
+```
+
 ## Usage
 
 ```tsx
-import React, { Component } from 'react'
+import React from 'react'
 
-import MyComponent from 'react-async-popup'
-import 'react-async-popup/dist/index.css'
+import { Confirm } from 'react-async-popup'
+import 'react-async-popup/index.css'
 
-class Example extends Component {
-  render() {
-    return <MyComponent />
+function App() {
+
+  async function onDelete() {
+
+    const { show } = await Confirm.new();
+
+    const result = await show({
+      title: ' Are you sure you want to delete the file ?'
+    });
+
+    if (result) {
+      ....
+    }
+
   }
+
+  return <button onClick={onDelete}> Delete File </button>
 }
 ```
 
