@@ -1,0 +1,1 @@
+{"data":{"allSite":{"edges":[{"node":{"siteMetadata":{"sidebarConfig":{"forcedNavOrder":["/"],"ignoreIndex":false}}}}]},"allMdx":{"edges":[{"node":{"fields":{"slug":"/api","title":"API"}}},{"node":{"fields":{"slug":"/examples","title":"Examples"}}},{"node":{"fields":{"slug":"/","title":"Introduction"}}}]}}}
