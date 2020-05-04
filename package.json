@@ -1,7 +1,7 @@
 {
   "name": "react-async-popup",
   "version": "0.0.1",
-  "description": "A promise based react popup library, to reduce extra state management when using popups.",
+  "description": "An accessible promise based popup library for react, to reduce extra state management needed for popups.",
   "author": "Aadil Hasan",
   "license": "MIT",
   "main": "index.js",
@@ -36,7 +36,7 @@
   "bugs": {
     "url": "https://github.com/aadilhasan/react-async-popup/issues"
   },
-  "homepage": "https://github.com/aadilhasan/react-async-popup#readme",
+  "homepage": "https://aadil.dev/react-async-popup",
   "peerDependencies": {
     "react": "^16.0.0"
   },
