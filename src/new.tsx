@@ -10,6 +10,10 @@ export default function (Component: any): any {
     return (config?: BaseProps): Promise<NewReturnType> => {
         const { container, ...rest } = config || {} as BaseProps;
         const div = getContainer(container);
+        // div will be null for SSR
+        if(!div){
+            return Promise.resolve({} as NewReturnType);
+        }
         let _ref: Confirm | null;
         const destroy = async () => {
             if (_ref) {

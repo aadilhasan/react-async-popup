@@ -54,13 +54,16 @@ export const trapFocus = (element: any) => {
 }
 
 export const getContainer = (container?: HTMLElement) => {
-    const div = document.createElement("div");
-    if (container && container instanceof Element) {
-        container.appendChild(div);
-    } else {
-        document.body.appendChild(div);
+    if (typeof document !== 'undefined') {
+        const div = document.createElement("div");
+        if (container && container instanceof Element) {
+            container.appendChild(div);
+        } else {
+            document.body.appendChild(div);
+        }
+        return div;
     }
-    return div;
+    return null
 }
 
 export const unmountReactComponent = (node: HTMLElement | null): Promise<void> => {
