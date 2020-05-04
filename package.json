@@ -1,6 +1,6 @@
 {
   "name": "react-async-popup",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An accessible promise based popup library for react, to reduce extra state management needed for popups.",
   "author": "Aadil Hasan",
   "license": "MIT",
@@ -85,6 +85,7 @@
     "webpack-cli": "^3.3.11"
   },
   "files": [
-    "dist"
+    "dist",
+    "index.d.ts"
   ]
 }
