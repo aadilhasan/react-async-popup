@@ -1,0 +1,85 @@
+---
+title: 'API'
+description: 'APIS of react-async-popup'
+---
+
+react-async-popup provides two components `Modal` and `Confirm`.
+
+To use Modal or Confirm, new method must be called, it takes an optional paramater.
+
+```tsx
+const callbacks = await Confirm.new()
+```
+
+```tsx
+const callbacks = await Modal.new()
+```
+
+## new method
+
+The new method returns a promise, which gets resolved with an object, which has two methods `show`, `destroy`.
+
+```tsx
+const { show, destroy } = await Confirm.new(config)
+```
+
+- show method to opens the modal/config
+- destroy method destroys the instance
+
+`new` method takes a config object as parameter which can have following values -
+
+| Tables         |                    type                     |                                       default                                        |                              description                              |
+| -------------- | :-----------------------------------------: | :----------------------------------------------------------------------------------: | :-------------------------------------------------------------------: |
+| popupStyle     |             React.CSSProperties             |                                                                                      |                      additional style for popup                       |
+| okText         |                   string                    |                                          Ok                                          |                          text for ok button                           |
+| cancelText     |                   string                    |                                        Cancel                                        |                        text for cancel button                         |
+| maskClosable   |                   boolean                   |                       for Modal - true and for Confirm - false                       |             whether close popup on mask/background click              |
+| closable       |                   boolean                   |                                        false                                         | if true cancel buttons will be hidden and closeOnEscape will be false |
+| closeOnEscape  |                   boolean                   |                                         true                                         |                  whether close popup on escape press                  |
+| wrapClassName  |                   string                    |                                                                                      |                       class for popup container                       |
+| aria           | `{labelledby: string, describedby: string}` | `{labelledby: 'react-async-popup-header', describedby: 'react-async-popup-content'}` |                    element ID's for accessibility                     |
+| destroyOnClose |                   boolean                   |                                         true                                         |            whether to destroy the popup instance on close             |
+| container      |                 HTMLElement                 |                                                                                      |                 html element where popup should mount                 |
+
+### show method
+
+Makes the Modal/Confirm visible to the user, it returns a promise, by default promise resolves with `true` on ok and with `false` on cancel.
+
+_`show` method also takes a config object as perameter, value of the config is same as `new` method
+just `destroyOnClose` and `container` properties are not available here._
+
+Value of `show` parameter can override the initial values given to the `new` method,
+this is really usefull when developer wan't to use single instance in more then one context.
+
+```tsx
+
+async function onDelete() {
+
+    const { show } = await Confirm.new();
+
+    const result = await show({
+      title: ' Are you sure you want to delete the file ?'
+    });
+
+    if (result === false) {
+      return;
+    }
+    ...
+  }
+```
+
+<span style='color: red; font-weight: bold;'>
+  Show method can also resolve with user provided value -
+</span>
+
+**
+`content` and `footer` components provided in the config of new or show method will receive
+`ok` and `cancel` callback methods as props/paramater.
+The value provided to these methods will be used to resolve the promise returned by `show` method.
+**
+
+### destroy method
+
+The destroy method destroys the instance, it returns a promise which resolves without any value.
+
+** Once destroyed the `show` method will always resolve with `null` value. **
