@@ -1,6 +1,6 @@
 # react-async-popup
 
-> A promise based popup (confirm and modal) library for react, to reduce extra state management needed for popups. checkout the docs here - https://www.aadilhasan.dev/react-async-popup
+> A promise based popup (confirm and modal) library for react, to reduce extra state management needed for popups. checkout the docs here - https://aadil.dev/react-async-popup
 
 ## Install
 
