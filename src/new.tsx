@@ -1,7 +1,7 @@
   
 import React from 'react'
 import { getContainer } from './utils';
-import { BaseProps, NewReturnType, OpenFun, DestroyCallbackFun } from './types';
+import { BaseProps, NewReturnType, ShowFun, DestroyCallbackFun } from './types';
 import { Confirm } from '.';
 import ReactDOM from 'react-dom';
 import { ComponentType } from './enums';
@@ -22,7 +22,7 @@ export default function (Component: any): any {
             }
         }
 
-        const show: OpenFun = (props) => {
+        const show: ShowFun = (props) => {
             return _ref ? _ref.open(props) : Promise.resolve(null) as any;
         }
 
@@ -30,7 +30,7 @@ export default function (Component: any): any {
             const getRef = (ref: Confirm) => {
                 _ref = ref;
                 resolve({
-                    show: show as OpenFun,
+                    show: show as ShowFun,
                     destroy: destroy as DestroyCallbackFun
                 });
             };

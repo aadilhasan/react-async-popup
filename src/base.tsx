@@ -1,5 +1,5 @@
 import React from "react";
-import { NewFun, OpenFun, PromiseCallbackFn, RenderFun, BaseProps, OpenConfig } from "./types";
+import { NewFun, ShowFun, PromiseCallbackFn, RenderFun, BaseProps, ShowConfig } from "./types";
 import { trapFocus, unmountReactComponent } from "./utils";
 import { CONTENT_ID, HEADER_ID } from "./const";
 import { ComponentType } from "./enums";
@@ -39,7 +39,7 @@ export default class Dialog extends React.Component<
   reject: PromiseCallbackFn | null = null;
   resolve: PromiseCallbackFn | null = null;
 
-  dynamicConfig: OpenConfig | null = null;
+  dynamicConfig: ShowConfig | null = null;
   removeFocusListener: Function | null;
 
   promiseState = {
@@ -202,7 +202,7 @@ export default class Dialog extends React.Component<
     return contentToRender;
   }
 
-  open: OpenFun = (dynamicProps?: OpenConfig) => {
+  open: ShowFun = (dynamicProps?: ShowConfig) => {
     this.dynamicConfig = null;
     this.promise = new Promise((resolve, reject) => {
       this.resolve = resolve;

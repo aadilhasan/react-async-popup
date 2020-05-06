@@ -1,7 +1,7 @@
 declare namespace ReactAsyncPopup {
 
     interface Show {
-        (props: ShowParam): Promise<any>
+        (props?: ShowParam): Promise<any>
     }
 
     interface Destroy {
@@ -49,6 +49,10 @@ declare namespace ReactAsyncPopup {
     class Confirm {
         static new: New
     }
+
+    function useModal(BaseProps): [Show, Destroy];
+
+    function useConfirm(BaseProps): [Show, Destroy];
 }
 
 export as namespace ReactAsyncPopup;
