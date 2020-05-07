@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Confirm, Modal } from 'react-async-popup'
+import { Confirm, Modal, useConfirm, useModal } from 'react-async-popup'
 
 let showAlert
 let showModal
@@ -31,6 +31,8 @@ Modal.new({
 
 export default function App() {
   const refContainer = React.useRef(null)
+  const [confirmHook,] = useConfirm({title: "Confirm using hooks"});
+  const [modalHook, destroyModal] = useModal({title: "Modal from hooks"});
 
   const toggleAlert = async () => {
     const isSuccess = await showAlert({
@@ -89,6 +91,20 @@ export default function App() {
     })
   }
 
+  const showConfirmFromHook = async () => {
+    const result = await confirmHook();
+    console.log(" show confirm ", result);
+  }
+
+  const showModalFromHook = async () => {
+    const result = await modalHook({
+      title: "Modal Hook Test",
+      content: "Some Content"
+    });
+    destroyModal();
+    console.log(" show confirm ", result);
+  }
+
   return (
     <div className='App' ref={refContainer}>
       <br />
@@ -104,6 +120,10 @@ export default function App() {
         mount modal to diffent container{' '}
       </button>
       <button onClick={notClosableAlert}>notClosableAlert</button>
+      <br/>
+      <h2> Hook example </h2>
+      <button onClick={showConfirmFromHook}> Confirm Hook </button>
+      <button onClick={showModalFromHook}> Modal Hook </button>
     </div>
   )
 }

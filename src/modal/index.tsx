@@ -1,6 +1,6 @@
 import Base from "../base";
 import "./styles.scss";
-import cerateNew from "../new"
+import createNew from "../new"
 import { ComponentType } from "../enums";
 
 class Modal extends Base {
@@ -9,5 +9,5 @@ class Modal extends Base {
   }
 }
 
-Modal.new = cerateNew(Modal);
+Modal.new = createNew(Modal);
 export default Modal;

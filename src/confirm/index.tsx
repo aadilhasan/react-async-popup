@@ -1,7 +1,7 @@
 
 import Base from "../base";
 import "./styles.scss";
-import cerateNew from "../new"
+import createNew from "../new"
 import { ComponentType } from "../enums";
 
 class Confirm extends Base {
@@ -10,6 +10,6 @@ class Confirm extends Base {
   }
 }
 
-Confirm.new = cerateNew(Confirm);
+Confirm.new = createNew(Confirm);
 
 export default Confirm;

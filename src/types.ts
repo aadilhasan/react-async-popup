@@ -10,9 +10,9 @@ export interface CallbackFuns {
   ok: ToggleFun;
   cancel: ToggleFun;
 }
-
-export interface OpenFun {
-  (props: OpenConfig): Promise<any>
+ 
+export interface ShowFun {
+  (props: ShowConfig): Promise<any>
 }
 
 export interface DestroyCallbackFun {
@@ -20,7 +20,7 @@ export interface DestroyCallbackFun {
 }
 
 export interface NewReturnType {
-  show: OpenFun;
+  show: ShowFun;
   destroy: DestroyCallbackFun;
 }
 
@@ -52,7 +52,7 @@ export interface BaseProps extends BaseConfig {
 }
 
 
-export interface OpenConfig extends BaseConfig {
+export interface ShowConfig extends BaseConfig {
   title?: React.ReactNode;
   content?: React.ReactNode;
   footer?: React.ReactNode;
