@@ -59,7 +59,7 @@ export default class Dialog extends React.Component<
     document.addEventListener('keyup', this.handleEscape);
   }
 
-  componentWillMount() {
+  componentWillUnmount() {
     document.removeEventListener('keyup', this.handleEscape);
   }
 

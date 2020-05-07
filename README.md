@@ -1,6 +1,6 @@
 # react-async-popup
 
-> A promise based React Popup.
+> A promise based popup (confirm and modal) library for react, to reduce extra state management needed for popups. checkout the docs here - https://aadil.dev/react-async-popup
 
 ## Install
 
@@ -20,7 +20,6 @@ yarn add react-async-popup
 import React from 'react'
 
 import { Confirm } from 'react-async-popup'
-import 'react-async-popup/index.css'
 
 function App() {
 
@@ -33,7 +32,9 @@ function App() {
     });
 
     if (result) {
-      ....
+      console.log(" Yes, Delete the file ")
+    }else{
+      console.log(" Don't delete ")
     }
 
   }
@@ -41,6 +42,7 @@ function App() {
   return <button onClick={onDelete}> Delete File </button>
 }
 ```
+Find more examples here - https://aadil.dev/react-async-popup/examples
 
 ## License
 
