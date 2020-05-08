@@ -101,7 +101,6 @@ export default function App() {
       title: "Modal Hook Test",
       content: "Some Content"
     });
-    destroyModal();
     console.log(" show confirm ", result);
   }
 
