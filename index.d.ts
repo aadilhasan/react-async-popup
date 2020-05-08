@@ -1,7 +1,7 @@
 declare namespace ReactAsyncPopup {
 
     interface Show {
-        (props?: ShowParam): Promise<any>
+        (config?: NewConfig): Promise<any>
     }
 
     interface Destroy {
@@ -27,16 +27,16 @@ declare namespace ReactAsyncPopup {
         }
     }
 
-    interface BaseProps extends BaseConfig {
+    interface Config extends BaseConfig {
         destroyOnClose?: boolean,
         container?: HTMLElement;
     }
 
     interface New {
-        (config?: BaseProps): Promise<NewReturnType>;
+        (config?: Config): Promise<NewReturnType>;
     }
 
-    interface ShowParam extends BaseConfig {
+    interface NewConfig extends BaseConfig {
         title?: React.ReactNode;
         content?: React.ReactNode;
         footer?: React.ReactNode;
@@ -50,9 +50,9 @@ declare namespace ReactAsyncPopup {
         static new: New
     }
 
-    function useModal(BaseProps): [Show | null, Destroy | null];
+    function useModal(config: Config): [Show | null, Destroy | null];
 
-    function useConfirm(BaseProps): [Show | null, Destroy | null];
+    function useConfirm(config: Config): [Show | null, Destroy | null];
 }
 
 export as namespace ReactAsyncPopup;
