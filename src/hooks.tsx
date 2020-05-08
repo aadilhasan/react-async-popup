@@ -27,11 +27,11 @@ function useComponent(componentType: ComponentType): any {
     };
 
     const destroy = () => {
-      if (callbacks[1] !== null) {
-        (callbacks[1] as any).destroy();
+      const destroyPopup: any = callbacks ? callbacks[1] : null;
+      if (destroyPopup) {
+        destroyPopup();
       }
     };
-
     return [...callbacks];
   };
 }
