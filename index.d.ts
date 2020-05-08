@@ -14,6 +14,9 @@ declare namespace ReactAsyncPopup {
     }
 
     interface BaseConfig {
+        title?: React.ReactNode;
+        content?: React.ReactNode;
+        footer?: React.ReactNode;
         popupStyle?: React.CSSProperties,
         okText?: string,
         cancelText?: string,
@@ -36,11 +39,7 @@ declare namespace ReactAsyncPopup {
         (config?: Config): Promise<NewReturnType>;
     }
 
-    interface NewConfig extends BaseConfig {
-        title?: React.ReactNode;
-        content?: React.ReactNode;
-        footer?: React.ReactNode;
-    }
+    type NewConfig = BaseConfig;
 
     class Modal {
         static new: New
