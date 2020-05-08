@@ -50,9 +50,9 @@ declare namespace ReactAsyncPopup {
         static new: New
     }
 
-    function useModal(BaseProps): [Show, Destroy];
+    function useModal(BaseProps): [Show | null, Destroy | null];
 
-    function useConfirm(BaseProps): [Show, Destroy];
+    function useConfirm(BaseProps): [Show | null, Destroy | null];
 }
 
 export as namespace ReactAsyncPopup;
