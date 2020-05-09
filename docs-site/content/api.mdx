@@ -3,28 +3,46 @@ title: 'API'
 description: 'APIS of react-async-popup'
 ---
 
-react-async-popup provides two components `Modal` and `Confirm`.
+import Link from '../src/components/link.js'
 
-To use Modal or Confirm, new method must be called, it takes an optional paramater.
+[react-async-popup](https://github.com/aadilhasan/react-async-popup) provides following modules -
+
+- Modal
+- Confirm
+- useModal
+- useConfirm
+
+To use Modal or Confirm, then <Link title={'new method '} url={'#new-method'} /> of it must be called.
+
+**Hooks function and new method both take an optional <Link title={'configuration object'} url={'#config'} /> as its first parameter.**
 
 ```tsx
-const callbacks = await Confirm.new()
+const callbacks = await Confirm.new(optionalConfig)
 ```
 
+or
+
 ```tsx
-const callbacks = await Modal.new()
+const [show, destroy] = useConfirm(optionalConfig)
 ```
 
 ## new method
 
-The new method returns a promise, which gets resolved with an object, which has two methods `show`, `destroy`.
+The new method returns a promise, which gets resolved with an object, this object has two methods <Link title={'show'} url={'#show-method'} /> and <Link title={'destroy'} url={'#destroy-method'} />.
 
 ```tsx
 const { show, destroy } = await Confirm.new(config)
 ```
 
-- show method to opens the modal/config
-- destroy method destroys the instance
+```tsx
+const { show, destroy } = await Modal.new(config)
+```
+
+<div id='config' />
+
+- <Link title={'show'} url={'#show-method'} /> method opens the popup
+- <Link title={'destroy'} url={'#destroy-method'} /> method destroys the instance
+  and <Link title={'show'} url={'#show-method'} /> method will work no more
 
 `new` method takes a config object as parameter which can have following values -
 
@@ -41,15 +59,45 @@ const { show, destroy } = await Confirm.new(config)
 | destroyOnClose |                   boolean                   |                                         true                                         |            whether to destroy the popup instance on close             |
 | container      |                 HTMLElement                 |                                                                                      |                 html element where popup should mount                 |
 
+**
+Provided `content` and `footer` components in the <Link title={'config object'} url={'#config'} /> will receive
+`ok` and `cancel` callback methods as props/parameter.
+The value provided to these methods will be used to resolve the promise returned by <Link title={'show'} url={'#show-method'} /> method. <Link title={'Example'} fullUrl={'/examples#complex-example---resolving-show-with-custom-value'} />
+**
+
+## hooks
+
+If you want to use modal or confirm in a functional component use [hooks](https://reactjs.org/docs/hooks-intro.html).
+If you don't know what hooks are and how they work please visit [React Hooks Intro](https://reactjs.org/docs/hooks-intro.html).
+
+How to use -
+
+```tsx
+const [show, destroy] = useConfirm(config)
+```
+
+A hook takes a <Link title={'config object'} url={'#config'} /> as its first parameter which is same config as <Link title={'new method '} url={'#new-method'} />, a hook returns an array which has two methods <Link title={'show'} url={'#show-method'} /> and <Link title={'destroy'} url={'#destroy-method'} />.
+
+**
+One thing to note here is before the popup is ready to use value of <Link title={'show'} url={'#show-method'} /> and <Link title={'destroy'} url={'#destroy-method'} /> will be `null`.
+**
+So in case you want to show popup on mount of the component make sure you add a null check.
+
+- <Link title={'show'} url={'#show-method'} /> method opens the popup
+- <Link title={'destroy'} url={'#destroy-method'} /> method destroys the instance
+  and <Link title={'show'} url={'#show-method'} /> method will work no more
+
+** <Link title={'Example'} fullUrl={'/examples#with-hooks'} /> **
+
 ### show method
 
-Makes the Modal/Confirm visible to the user, it returns a promise, by default promise resolves with `true` on ok and with `false` on cancel.
+Makes the popup visible to the user, it returns a promise. By default this promise resolves with `true` on ok and with `false` on cancel.
 
-_`show` method also takes a config object as perameter, value of the config is same as `new` method
-just `destroyOnClose` and `container` properties are not available here._
+_<Link title={'show'} url={'#show-method'} /> method also takes a <Link title={'config'} url={'#config'} /> object as perameter, the <Link title={'config'} url={'#config'} /> is same as <Link title={'new method '} url={'#new-method'} /> config
+just ** `destroyOnClose` and `container` properties are not available here **._
 
-Value of `show` parameter can override the initial values given to the `new` method,
-this is really usefull when developer wan't to use single instance in more then one context.
+Value of <Link title={'show'} url={'#show-method'} /> parameter can override the initial values given to the `new` method,
+this is really usefull when developer wan't to use single instance in more then one places.
 
 ```tsx
 
@@ -73,13 +121,15 @@ async function onDelete() {
 </span>
 
 **
-`content` and `footer` components provided in the config of new or show method will receive
-`ok` and `cancel` callback methods as props/paramater.
-The value provided to these methods will be used to resolve the promise returned by `show` method.
+Provided components (`content` and `footer`) in the <Link title={'config object'} url={'#config'} /> will receive
+`ok` and `cancel` callback methods as props or parameter.
+The value provided to these methods will be used to resolve the promise returned by <Link title={'show'} url={'#show-method'} /> method. <Link title={'Example'} fullUrl={'/examples#complex-example---resolving-show-with-custom-value'} />
 **
 
 ### destroy method
 
 The destroy method destroys the instance, it returns a promise which resolves without any value.
 
-** Once destroyed the `show` method will always resolve with `null` value. **
+** Once destroyed the <Link title={'show'} url={'#show-method'} /> method will always resolve with `null` value. **
+
+** <Link title={'Checkout the examples'} fullUrl={'/examples'} /> **
